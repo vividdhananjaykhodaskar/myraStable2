@@ -68,22 +68,23 @@ const PromptModify = () => {
 
   function getDuration(callData: any) {
     const startTime = new Date(callData.createdAt).getTime();
-    const endTime = new Date(callData.call_end_time || callData.last_activity).getTime();
-  
+    const endTime = new Date(
+      callData.call_end_time || callData.last_activity
+    ).getTime();
+
     // Check if dates are valid
     if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
       return "00:00:00";
     }
-  
+
     const timediffence = endTime - startTime;
     const totalSeconds = Math.floor(timediffence / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-  
+
     return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   }
-  
 
   function calculateGroqCost(
     model: string,
@@ -131,18 +132,6 @@ const PromptModify = () => {
             Call Times & Duration
           </TableColumn>
           <TableColumn className="text-left mb-2 pb-2 border-b border-white text-sm">
-            Azure Cost
-          </TableColumn>
-          <TableColumn className="text-left mb-2 pb-2 border-b border-white text-sm">
-            Groq Input Cost
-          </TableColumn>
-          <TableColumn className="text-left mb-2 pb-2 border-b border-white text-sm">
-            Groq Output Cost
-          </TableColumn>
-          <TableColumn className="text-left mb-2 pb-2 border-b border-white text-sm">
-            DeepGram Cost
-          </TableColumn>
-          <TableColumn className="text-left mb-2 pb-2 border-b border-white text-sm">
             Total Cost
           </TableColumn>
         </TableHeader>
@@ -169,19 +158,7 @@ const PromptModify = () => {
                   {moment(item.createdAt).format("MMM DD, YYYY, hh:mm A")} -{" "}
                   {moment(item.call_end_time || item.last_activity).format(
                     "MMM DD, YYYY, hh:mm A"
-                  )}{" "}
-                </TableCell>
-                <TableCell className="text-[#9ca5ad] xl:text-sm text-xs align-top group-hover:text-white transition-all duration-200 ease-linear">
-                  ${azurePrize.toFixed(3)}({item.character_count})
-                </TableCell>
-                <TableCell className="text-[#9ca5ad] xl:text-sm text-xs align-top group-hover:text-white transition-all duration-200 ease-linear">
-                  ${groqInputCost.toFixed(6)} ({item.groq_input_tokens ?? 0})
-                </TableCell>
-                <TableCell className="text-[#9ca5ad] xl:text-sm text-xs align-top group-hover:text-white transition-all duration-200 ease-linear">
-                  ${groqOutputCost.toFixed(6)} ({item.groq_output_tokens ?? 0})
-                </TableCell>
-                <TableCell className="text-[#9ca5ad] xl:text-sm text-xs align-top group-hover:text-white transition-all duration-200 ease-linear">
-                  ${deepgramPrize.toFixed(3)} ({item.call_duration || duration})
+                  )}
                 </TableCell>
                 <TableCell className="text-[#9ca5ad] group-hover:text-white xl:text-sm text-xs align-top transition-all duration-200 ease-linear">
                   <div className="flex justify-between">
