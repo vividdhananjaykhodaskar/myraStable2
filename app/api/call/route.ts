@@ -19,6 +19,7 @@ export async function GET(request: Request) {
   const skip = (page - 1) * limit;
 
   const callData = await CallCollectionModel.find({ user_id: user.id })
+    .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
 
