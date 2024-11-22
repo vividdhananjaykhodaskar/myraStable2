@@ -1,4 +1,5 @@
 "use client";
+import { useAppSelector } from "@/redux";
 import { getCallLogs } from "@/service/prservice";
 import {
   Table,
@@ -29,6 +30,7 @@ const price: any = {
 };
 
 const PromptModify = () => {
+  const { user } = useAppSelector((state) => state.insdata);
   const [callLogs, setCallLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -147,8 +149,9 @@ const PromptModify = () => {
               item.groq_input_tokens ?? 0,
               item.groq_output_tokens ?? 0
             );
-            const totalCost =
-              azurePrize + deepgramPrize + groqInputCost + groqOutputCost;
+            const totalMinutes = timeStringToSeconds(duration) / 60;
+            const flatCost = totalMinutes * (user?.callCostPerMin ?? 0.059);
+            // const totalCost = azurePrize + deepgramPrize + groqInputCost + groqOutputCost;
             return (
               <TableRow key={item._id} className="group">
                 <TableCell className="text-[#9ca5ad] xl:text-sm text-xs align-top group-hover:text-white transition-all duration-200 ease-linear">
@@ -162,7 +165,7 @@ const PromptModify = () => {
                 </TableCell>
                 <TableCell className="text-[#9ca5ad] group-hover:text-white xl:text-sm text-xs align-top transition-all duration-200 ease-linear">
                   <div className="flex justify-between">
-                    <div>${totalCost.toFixed(4)}</div>{" "}
+                    <div>${flatCost.toFixed(4)}</div>{" "}
                     <Link
                       href={`/dashboard/calllogs/callConversation/${item._id}`}
                       className="inline-flex gap-3 transition-all duration-200 ease-linear"
