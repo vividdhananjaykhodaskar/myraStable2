@@ -67,7 +67,7 @@ const Overview = () => {
         </button>
       </div>
 
-      <div className="w-full flex gap-2 pt-3">
+      <div className="w-full flex flex-col lg:flex-row gap-2 pt-3">
         <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Cost</p>
           <p className="px-3 py-2   text-3xl text-slate-100">$0.00</p>
