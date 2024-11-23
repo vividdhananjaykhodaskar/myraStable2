@@ -150,7 +150,7 @@ const PromptModify = () => {
               item.groq_output_tokens ?? 0
             );
             const totalMinutes = timeStringToSeconds(duration) / 60;
-            const flatCost = totalMinutes * (user?.callCostPerMin ?? 0.059);
+            const flatCost = totalMinutes * (user?.callCost ?? 0.059);
             // const totalCost = azurePrize + deepgramPrize + groqInputCost + groqOutputCost;
             return (
               <TableRow key={item._id} className="group">
