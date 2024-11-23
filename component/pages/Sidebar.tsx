@@ -90,6 +90,21 @@ const Sidebar = () => {
               Call Logs
             </Link>
           </li>
+          <li>
+            <Link
+              href="/dashboard/overview"
+              className="flex items-center gap-3 mb-4 text-white text-base"
+            >
+              <Image
+                src="/overview-icon.svg"
+                alt=""
+                width={30}
+                height={30}
+                className="p-2 rounded-md bg-[rgba(148,148,148,0.5)]"
+              />{" "}
+              Overview
+            </Link>
+          </li>
         </ul>
         <div className="flex gap-3 items-center justify-between py-5 border-t border-[#3d3d3d] bg-[#00181a] absolute w-[calc(100%-32px)] bottom-0">
           <h3 className="text-white text-base">{user?.name}</h3>

@@ -192,3 +192,18 @@ export const getConversationForCall = async (id: string) => {
       return null;
     });
 };
+
+export const getCallOverview = async ({
+  start_date,
+  end_date,
+}: {
+  start_date: string;
+  end_date: string;
+}) => {
+  if (!start_date || !end_date) {
+    throw new Error("Both 'start_date' and 'end_date' are required.");
+  }
+  return fetch(`/api/call/overview?start_date=${start_date}&end_date=${end_date}`, {
+    cache: "no-store",
+  }).then((res) => res.json());
+};
