@@ -6,6 +6,7 @@ export interface IUser extends Document {
   name: string;
   contact: string;
   salt: string;
+  callCost: number;
 }
 export const userSchema = new Schema<IUser>(
   {
@@ -14,6 +15,7 @@ export const userSchema = new Schema<IUser>(
     contact: { type: String },
     salt: { type: String },
     password: { type: String, required: true },
+    callCost: { type: Number, default: 0.059 },
   },
   {
     toJSON: {
