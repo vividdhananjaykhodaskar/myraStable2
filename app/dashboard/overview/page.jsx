@@ -9,7 +9,7 @@ const Overview = () => {
     totalCalls: 0,
     totalCost: 0,
     totalMinutes: 0,
-    avgCostPerMin:0
+    avgCostPerMin: 0,
   });
 
   // Function to get the start and end of the current month
@@ -36,27 +36,24 @@ const Overview = () => {
     setCurrentDate(newDate);
   };
 
-  const { start, end } = useMemo(() =>getBillingPeriod(currentDate), [currentDate]);
+  const { start, end } = useMemo(
+    () => getBillingPeriod(currentDate),
+    [currentDate]
+  );
 
-  
-  const fetchCallLogs = async (start_date,end_date) => {
+  const fetchCallLogs = async (start_date, end_date) => {
     try {
-      const data = await getCallOverview({ start_date, end_date });
-      setData(prev => ({
-        ...prev,
-        totalCalls:data.totalCalls,
-        totalCost: data.totalCost,
-        totalMinutes: data.totalMinutes,
-        avgCostPerMin: data.avgCostPerMin
-      }));      
+      const { totalCalls, totalCost, totalMinutes, avgCostPerMin } =
+        await getCallOverview({ start_date, end_date });
+      setData({ totalCalls, totalCost, totalMinutes, avgCostPerMin });
     } catch (error) {
       console.error("Error fetching call logs:", error);
     }
   };
 
   useEffect(() => {
-    fetchCallLogs(start,end);
-  }, [start,end]);
+    fetchCallLogs(start, end);
+  }, [start, end]);
 
   return (
     <div className="p-4 flex-grow">
@@ -77,22 +74,32 @@ const Overview = () => {
       <div className="w-full gap-2 grid  lg:grid-cols-4 md:grid-cols-2 grid-cols-1  pt-3">
         <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">No. of Calls</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">{data['totalCalls']}</p>
+          <p className="px-3 py-2   text-3xl text-slate-100">
+            {data["totalCalls"]}
+          </p>
         </div>
 
         <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Cost</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">${data['totalCost'].toFixed(2)}</p>
+          <p className="px-3 py-2   text-3xl text-slate-100">
+            ${data["totalCost"].toFixed(2)}
+          </p>
         </div>
 
         <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Call Minutes</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">{data['totalMinutes'].toFixed(2)}</p>
+          <p className="px-3 py-2   text-3xl text-slate-100">
+            {data["totalMinutes"].toFixed(2)}
+          </p>
         </div>
-         
+
         <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
-          <p className="px-3 py-1 text-md text-slate-400">Average Cost Per Minutes</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">$ {data['avgCostPerMin']}</p>
+          <p className="px-3 py-1 text-md text-slate-400">
+            Average Cost Per Minutes
+          </p>
+          <p className="px-3 py-2   text-3xl text-slate-100">
+            $ {data["avgCostPerMin"]}
+          </p>
         </div>
       </div>
     </div>
