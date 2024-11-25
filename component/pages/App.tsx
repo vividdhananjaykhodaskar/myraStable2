@@ -193,13 +193,17 @@ const App = ({
     }
   };
 
+  // const processchunckdevice = (reader: any) => {
+  //   if (deviceType == "iOS") {
+  //     processAudioChunkIOS(reader);
+  //   } else {
+  //     processAudioChunkOther(reader);
+  //   }
+  // };
+
   const processchunckdevice = (reader: any) => {
-    if (deviceType == "iOS") {
-      processAudioChunkIOS(reader);
-    } else {
-      processAudioChunkOther(reader);
-    }
-  };
+    processAudioChunkIOS(reader);
+};
 
   const processAudioChunkOther = (reader: any) => {
     let audio_chunk: any = [];
