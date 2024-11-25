@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 const Overview = () => {
+  const today = new Date();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [data, setData] = useState({
     totalCalls: 0,
@@ -36,6 +37,13 @@ const Overview = () => {
     setCurrentDate(newDate);
   };
 
+  const isNextDisabled = useMemo(() => {
+    return (
+      currentDate.getFullYear() === today.getFullYear() &&
+      currentDate.getMonth() === today.getMonth()
+    );
+  }, [currentDate, today]);
+
   const { start, end } = useMemo(
     () => getBillingPeriod(currentDate),
     [currentDate]
@@ -66,8 +74,14 @@ const Overview = () => {
         <button onClick={goToPreviousMonth}>
           <Image src="/chevron-left.svg" alt="" width={20} height={20} />
         </button>
-        <button onClick={goToNextMonth}>
-          <Image src="/chevron-right.svg" alt="" width={20} height={20} />
+        <button onClick={goToNextMonth} disabled={isNextDisabled}>
+          <Image
+            src="/chevron-right.svg"
+            alt=""
+            width={20}
+            height={20}
+            style={{ opacity: isNextDisabled ? 0.5 : 1 }}
+          />
         </button>
       </div>
 
