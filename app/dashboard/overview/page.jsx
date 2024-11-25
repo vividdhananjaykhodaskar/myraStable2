@@ -1,10 +1,16 @@
 "use client";
 import { getCallOverview } from "@/service/prservice";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const Overview = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [data, setData] = useState({
+    totalCalls: 0,
+    totalCost: 0,
+    totalMinutes: 0,
+    avgCostPerMin:0
+  });
 
   // Function to get the start and end of the current month
   const getBillingPeriod = (date) => {
@@ -30,26 +36,27 @@ const Overview = () => {
     setCurrentDate(newDate);
   };
 
-  const { start, end } = getBillingPeriod(currentDate);
+  const { start, end } = useMemo(() =>getBillingPeriod(currentDate), [currentDate]);
 
   
-  const fetchCallLogs = async () => {
-    const start_date = "2024-11-23"; // Example start date
-    const end_date = "2024-11-24"; // Example end date
-    console.log()
+  const fetchCallLogs = async (start_date,end_date) => {
     try {
       const data = await getCallOverview({ start_date, end_date });
-      console.log("Total Count:", data.totalCount);
-      console.log("Total Minutes:", data.totalMinutes);
+      setData(prev => ({
+        ...prev,
+        totalCalls:data.totalCalls,
+        totalCost: data.totalCost,
+        totalMinutes: data.totalMinutes,
+        avgCostPerMin: data.avgCostPerMin
+      }));      
     } catch (error) {
       console.error("Error fetching call logs:", error);
     }
   };
 
   useEffect(() => {
-    console.log("Fetching call logs...");
-    fetchCallLogs();
-  }, []);
+    fetchCallLogs(start,end);
+  }, [start,end]);
 
   return (
     <div className="p-4 flex-grow">
@@ -69,18 +76,23 @@ const Overview = () => {
 
       <div className="w-full flex flex-col lg:flex-row gap-2 pt-3">
         <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+          <p className="px-3 py-1 text-md text-slate-400">No. of Calls</p>
+          <p className="px-3 py-2   text-3xl text-slate-100">{data['totalCalls']}</p>
+        </div>
+
+        <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Cost</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">$0.00</p>
+          <p className="px-3 py-2   text-3xl text-slate-100">${data['totalCost'].toFixed(2)}</p>
         </div>
 
         <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Call Minutes</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">0 mins</p>
+          <p className="px-3 py-2   text-3xl text-slate-100">{data['totalMinutes'].toFixed(2)} mins</p>
         </div>
          
         <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Average Cost Per Minutes</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">$0.00</p>
+          <p className="px-3 py-2   text-3xl text-slate-100">$ {data['avgCostPerMin']}</p>
         </div>
       </div>
     </div>

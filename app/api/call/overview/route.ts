@@ -1,13 +1,14 @@
 import { validateRequest } from "@/lib/auth";
 import { getDuration } from "@/lib/utils";
 import connectMongo from "@/mongodb/connectmongoDb";
-import { CallCollectionModel } from "@/mongodb/models/mainModel";
+import { CallCollectionModel, User } from "@/mongodb/models/mainModel";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
     
     const { user } = await validateRequest();
+ 
     
     if (!user) {
       return NextResponse.json({ message: "unauthorized" }, { status: 401 });
@@ -43,7 +44,7 @@ export async function GET(request: Request) {
       createdAt: { $gte: start, $lte: end },
     });
 
-    const totalCount = callData.length;
+    const totalCalls = callData.length;
 
     // Helper function to convert duration to seconds
     const timeStringToSeconds = (timeString: string): number => {
@@ -57,7 +58,11 @@ export async function GET(request: Request) {
       return sum + timeStringToSeconds(duration) / 60;
     }, 0);
 
-    return NextResponse.json({ totalCount, totalMinutes }, { status: 200 });
+    const loggedInUser = await User.findById(user.id);
+    const totalCost = totalMinutes * (loggedInUser?.callCost ?? 0.059);
+    const avgCostPerMin= totalMinutes > 0 ? totalCost / totalMinutes : 0;
+
+    return NextResponse.json({ totalCalls, totalMinutes,totalCost,avgCostPerMin }, { status: 200 });
   } catch (error) {
     console.error("Error processing the request:", error);
 
