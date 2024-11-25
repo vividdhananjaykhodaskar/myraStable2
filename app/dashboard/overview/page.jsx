@@ -87,7 +87,7 @@ const Overview = () => {
 
         <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Call Minutes</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">{data['totalMinutes'].toFixed(2)} mins</p>
+          <p className="px-3 py-2   text-3xl text-slate-100">{data['totalMinutes'].toFixed(2)}</p>
         </div>
          
         <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
