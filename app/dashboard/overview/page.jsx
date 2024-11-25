@@ -74,23 +74,23 @@ const Overview = () => {
         </button>
       </div>
 
-      <div className="w-full flex flex-col lg:flex-row gap-2 pt-3">
-        <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+      <div className="w-full gap-2 grid  lg:grid-cols-4 md:grid-cols-2 grid-cols-1  pt-3">
+        <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">No. of Calls</p>
           <p className="px-3 py-2   text-3xl text-slate-100">{data['totalCalls']}</p>
         </div>
 
-        <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+        <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Cost</p>
           <p className="px-3 py-2   text-3xl text-slate-100">${data['totalCost'].toFixed(2)}</p>
         </div>
 
-        <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+        <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Call Minutes</p>
           <p className="px-3 py-2   text-3xl text-slate-100">{data['totalMinutes'].toFixed(2)}</p>
         </div>
          
-        <div className="grow h-32 flex flex-col justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+        <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
           <p className="px-3 py-1 text-md text-slate-400">Average Cost Per Minutes</p>
           <p className="px-3 py-2   text-3xl text-slate-100">$ {data['avgCostPerMin']}</p>
         </div>
