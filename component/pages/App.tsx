@@ -316,7 +316,7 @@ const App = ({
     const context = new (window.AudioContext || window.webkitAudioContext)();
     context.createMediaElementSource(audioElement);
     let gainNode = context.createGain();
-    gainNode.gain.value = 2;
+    gainNode.gain.setValueAtTime(1, context.currentTime); 
     gainNode.connect(context.destination);
 
     if (context.state === "suspended") {
