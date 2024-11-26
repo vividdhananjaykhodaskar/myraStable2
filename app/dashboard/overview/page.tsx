@@ -1,4 +1,5 @@
 "use client";
+import ApexColumnChart from "@/component/pages/overview/ApexColumnChart";
 import { getCallOverview } from "@/service/prservice";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
@@ -14,7 +15,7 @@ const Overview = () => {
   });
 
   // Function to get the start and end of the current month
-  const getBillingPeriod = (date:any) => {
+  const getBillingPeriod = (date: any) => {
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
@@ -49,7 +50,7 @@ const Overview = () => {
     [currentDate]
   );
 
-  const fetchCallLogs = async (start_date:string, end_date:string) => {
+  const fetchCallLogs = async (start_date: string, end_date: string) => {
     try {
       const { totalCalls, totalCost, totalMinutes, avgCostPerMin } =
         await getCallOverview({ start_date, end_date });
@@ -115,6 +116,9 @@ const Overview = () => {
             $ {data["avgCostPerMin"]}
           </p>
         </div>
+      </div>
+      <div className="w-2/4">
+        <ApexColumnChart />
       </div>
     </div>
   );
