@@ -105,7 +105,7 @@ export async function GET(request: Request) {
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
-
+    console.log(dates,"<<<<<dates")
     return NextResponse.json(
       { totalCalls, totalMinutes, totalCost, avgCostPerMin, currCostArray, dates },
       { status: 200 }

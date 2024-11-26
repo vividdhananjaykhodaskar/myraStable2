@@ -8,7 +8,6 @@ const ApexColumnChart = ({
   costArray: number[];
   datesArray: string[];
 }) => {
-  console.log(costArray, datesArray);
   const chartOption = {
     series: [
       {
