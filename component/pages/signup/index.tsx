@@ -32,6 +32,7 @@ const SignUp = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -40,7 +41,18 @@ const SignUp = () => {
     const loginUser: any = await signupFunction(data);
     if (loginUser.success) {
       dispatch(handleUser(loginUser.data));
-      route.push("/dashboard");
+      toast(loginUser.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+      reset();
     } else {
       toast(loginUser.message, {
         position: "top-right",
