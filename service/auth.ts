@@ -53,3 +53,21 @@ export const logoutFunction = () => {
     })
     .catch(() => ({ success: false, message: "somthing went worng" }));
 };
+
+export const verifyAccount = (token: string) => {
+  return fetch(`/api/verifyAccount?token=${token}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(async (res) => {
+      const result = await res.json();
+      if (res.ok) {
+        return { success: true, message: result.message, data: result.data };
+      }
+
+      return { success: false, message: result.message };
+    })
+    .catch(() => ({ success: false, message: "Something went wrong" }));
+};
