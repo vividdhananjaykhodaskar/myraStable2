@@ -14,7 +14,7 @@ const Overview = () => {
   });
 
   // Function to get the start and end of the current month
-  const getBillingPeriod = (date) => {
+  const getBillingPeriod = (date:any) => {
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
@@ -49,7 +49,7 @@ const Overview = () => {
     [currentDate]
   );
 
-  const fetchCallLogs = async (start_date, end_date) => {
+  const fetchCallLogs = async (start_date:string, end_date:string) => {
     try {
       const { totalCalls, totalCost, totalMinutes, avgCostPerMin } =
         await getCallOverview({ start_date, end_date });
