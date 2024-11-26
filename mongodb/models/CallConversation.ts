@@ -9,6 +9,7 @@ export interface IMessage {
 export interface ICallConversation extends Document {
   messages: IMessage[];
   lastUpdated: Date;
+  callId?: string;//
 }
 
 export const CallConversationSchema = new Schema<ICallConversation>(
@@ -21,11 +22,23 @@ export const CallConversationSchema = new Schema<ICallConversation>(
       },
     ],
     lastUpdated: { type: Date, default: Date.now },
+    callId: { type: String, required: false },//
   },
   {
     timestamps: true,
   }
 );
+
+CallConversationSchema.path("callId").validate(function (// 
+  this: ICallConversation,
+  value: string
+) {
+  const type = (this as any).type;
+  if (type === "phone" && !value) {
+    return false;
+  }
+  return true;
+}, "callId is required when type is 'phone'.");
 
 CallConversationSchema.pre("save", function (next) {
   this.messages.forEach((msg: IMessage) => {
