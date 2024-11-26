@@ -36,9 +36,10 @@ export async function POST(request: Request) {
       share_key: rendonToken,
     });
 
-    const session = await lucia.createSession(newUser._id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+    // Removing this as we are adding the email verification so we can't log the user in directly after the sign up
+    // const session = await lucia.createSession(newUser._id, {});
+    // const sessionCookie = lucia.createSessionCookie(session.id);
+    // cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
     return NextResponse.json({ message: "Signed up successfully", data: newUser }, { status: 201 });
   } catch (e) {
