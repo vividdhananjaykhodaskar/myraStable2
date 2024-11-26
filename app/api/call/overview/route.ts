@@ -16,6 +16,7 @@ export async function GET(request: Request) {
 
     await connectMongo();
 
+    const loggedInUser = await User.findById(user.id);
     const { searchParams } = new URL(request.url);
     const startDate = searchParams.get("start_date");
     const endDate = searchParams.get("end_date");
@@ -52,17 +53,33 @@ export async function GET(request: Request) {
       return hours * 3600 + minutes * 60 + seconds;
     };
 
-    // Calculate total minutes
+    // Calculate total minutes and prepare daily costs
+    const costMap: Record<string, number> = {};
+
     const totalMinutes = callData.reduce((sum, item) => {
       const duration = item.call_duration || getDuration(item); // Assuming getDuration is available
-      return sum + timeStringToSeconds(duration) / 60;
+      const seconds = timeStringToSeconds(duration);
+      const minutes = seconds / 60;
+
+      const date = new Date(item.createdAt).toISOString().split("T")[0];
+      costMap[date] = (costMap[date] || 0) + minutes;
+      return sum + minutes;
     }, 0);
 
-    const loggedInUser = await User.findById(user.id);
-    const totalCost = totalMinutes * (loggedInUser?.callCost ?? 0.059);
-    const avgCostPerMin= totalMinutes > 0 ? totalCost / totalMinutes : 0;
+    // Calculate costs for each day
+    const costPerMinute = loggedInUser?.callCost ?? 0.059;
+    for (const date in costMap) {
+      costMap[date] *= costPerMinute;
+    }
 
-    return NextResponse.json({ totalCalls, totalMinutes,totalCost,avgCostPerMin }, { status: 200 });
+    const totalCost = totalMinutes * costPerMinute;
+    const avgCostPerMin = totalMinutes > 0 ? totalCost / totalMinutes : 0;
+
+    console.log(costMap)
+    return NextResponse.json(
+      { totalCalls, totalMinutes, totalCost, avgCostPerMin, costMap },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error processing the request:", error);
 

@@ -7,11 +7,14 @@ import { useEffect, useMemo, useState } from "react";
 const Overview = () => {
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [costArray,setCostArray] = useState<any>([]);
+  const [datesArray,setDatesArray] = useState<any>([]);
   const [data, setData] = useState({
     totalCalls: 0,
     totalCost: 0,
     totalMinutes: 0,
     avgCostPerMin: 0,
+    costMap: {},
   });
 
   // Function to get the start and end of the current month
@@ -52,14 +55,51 @@ const Overview = () => {
 
   const fetchCallLogs = async (start_date: string, end_date: string) => {
     try {
-      const { totalCalls, totalCost, totalMinutes, avgCostPerMin } =
+      const { totalCalls, totalCost, totalMinutes, avgCostPerMin, costMap } =
         await getCallOverview({ start_date, end_date });
-      setData({ totalCalls, totalCost, totalMinutes, avgCostPerMin });
+      setData({ totalCalls, totalCost, totalMinutes, avgCostPerMin, costMap });
+
+      // console.log("costMap>>>>>>>>>>>>", costMap);
+
+      const startDate = new Date(start_date);
+      const endDate = new Date(end_date);
+
+      // Sorting costMap by the date
+      const sortedDates = Object.keys(costMap).sort(
+        (a, b) => new Date(a) - new Date(b)
+      );
+
+      const costArray = [];
+      const dates = [];
+
+      // Iterate through the date range from startDate to endDate
+      let currentDate = new Date(startDate);
+      while (currentDate <= endDate) {
+        const currentDateString = currentDate.toISOString().split("T")[0]; // Convert to string "YYYY-MM-DD"
+
+        // Push the current date and cost (if exists, otherwise 0)
+        dates.push(currentDateString);
+        costArray.push(
+          costMap[currentDateString] !== undefined
+            ? costMap[currentDateString]
+            : 0
+        );
+
+        // Move to the next day
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      setDatesArray(dates);
+      setCostArray(costArray);
+      // console.log("Dates:", dates);
+      // console.log("Costs:", costArray);
     } catch (error) {
       console.error("Error fetching call logs:", error);
     }
   };
 
+
+  console.log(datesArray,"<<<<<<<<<<<<<<<<<<<")
+  console.log(costArray,"<<<<<<<<<<<<<<<<<<<")
   useEffect(() => {
     fetchCallLogs(start, end);
   }, [start, end]);
@@ -118,7 +158,7 @@ const Overview = () => {
         </div>
       </div>
       <div className="w-2/4">
-        <ApexColumnChart />
+        <ApexColumnChart datesArray={datesArray} costArray={costArray}/>
       </div>
     </div>
   );

@@ -1,16 +1,19 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
-const ApexColumnChart = () => {
-  const [chartData, setChartData] = React.useState({
+const ApexColumnChart = ({
+  costArray,
+  datesArray,
+}: {
+  costArray: number[];
+  datesArray: string[];
+}) => {
+  console.log(costArray, datesArray);
+  const chartOption = {
     series: [
       {
         name: "Inflation",
-        data: [
-          2.3, 3.1, 4.0, 10.1, 4.0, 3.6, 3.2, 2.3, 3.2, 2.3, 1.4, 0.8, 0.5, 0.2,
-          1.4, 0.8, 0.5, 0.2, 2.3, 3.1, 4.0, 10.1, 4.0, 3.6, 3.2, 2.3, 1.4, 0.8,
-          0.5, 0.2,
-        ],
+        data: costArray,
       },
     ],
     options: {
@@ -20,7 +23,7 @@ const ApexColumnChart = () => {
       },
       plotOptions: {
         bar: {
-          borderRadius: 10,
+          borderRadius: 3,
           dataLabels: {
             position: "top", // top, center, bottom
           },
@@ -29,7 +32,7 @@ const ApexColumnChart = () => {
       dataLabels: {
         enabled: true,
         formatter: function (val: any) {
-          return val + "%";
+          return val ? val.toFixed(2) : "";
         },
         offsetY: -20,
         style: {
@@ -39,21 +42,8 @@ const ApexColumnChart = () => {
       },
       colors: ["#4ade80"],
       xaxis: {
-        categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
-        position: "top",
+        categories: datesArray,
+        position: "bottom",
         axisBorder: {
           show: false,
         },
@@ -100,14 +90,14 @@ const ApexColumnChart = () => {
         },
       },
     },
-  });
+  };
 
   return (
     <div>
       <div id="chart">
         <ReactApexChart
-          options={chartData.options}
-          series={chartData.series}
+          options={chartOption.options}
+          series={chartOption.series}
           type="bar"
           height={350}
         />
