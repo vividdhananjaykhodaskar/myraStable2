@@ -75,9 +75,39 @@ export async function GET(request: Request) {
     const totalCost = totalMinutes * costPerMinute;
     const avgCostPerMin = totalMinutes > 0 ? totalCost / totalMinutes : 0;
 
-    console.log(costMap)
+
+    
+    const currStartDate = new Date(startDate);
+    const currEndDate = new Date(endDate);
+
+    // Sorting costMap by the date
+    const sortedDates = Object.keys(costMap).sort(
+      (a, b) => new Date(a) - new Date(b)
+    );
+
+    const currCostArray = [];
+    const dates = [];
+
+    // Iterate through the date range from currStartDate to currEndDate
+    let currentDate = new Date(currStartDate);
+    while (currentDate <= currEndDate) {
+      const currentDateString = currentDate.toISOString().split("T")[0]; // Convert to string "YYYY-MM-DD"
+
+      // Push the current date and cost (if exists, otherwise 0)
+      dates.push(currentDateString);
+      currCostArray.push(
+        costMap[currentDateString] !== undefined
+          ? costMap[currentDateString]
+          : 0
+      );
+
+      // Move to the next day
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+
     return NextResponse.json(
-      { totalCalls, totalMinutes, totalCost, avgCostPerMin, costMap },
+      { totalCalls, totalMinutes, totalCost, avgCostPerMin, currCostArray, dates },
       { status: 200 }
     );
   } catch (error) {
