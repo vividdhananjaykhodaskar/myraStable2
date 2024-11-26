@@ -50,6 +50,15 @@ const ApexColumnChart = ({
         axisTicks: {
           show: false,
         },
+        labels: {
+          formatter: function (value:any) {
+            const date = new Date(value);
+            return date.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
+          },
+        },
         crosshairs: {
           fill: {
             type: "gradient",
