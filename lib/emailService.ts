@@ -9,7 +9,7 @@ export async function sendEmailVerification(email: string, token: string) {
     },
   });
 
-  const verificationLink = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/verify-email?token=${token}`;
+  const verificationLink = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/verify-account?token=${token}`;
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
