@@ -1,14 +1,13 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import FormInput from "../../FormField/FormInput";
 import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { loginFunction } from "@/service/auth";
+import { loginFunction, resendVerification } from "@/service/auth";
 import { useRouter } from "next/navigation";
-import { toast, Bounce } from "react-toastify";
 import { useAppDispatch } from "@/redux";
 import { handleUser } from "@/redux/indSourceSlice";
 
@@ -20,10 +19,14 @@ const schema = yup.object().shape({
 function LoginInner() {
   const route = useRouter();
   const dispatch = useAppDispatch();
+  const [resendEmail, setResendEmail] = useState(""); // State to track resend button visibility
+  const [statusMessage, setStatusMessage] = useState(""); // State for status messages
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -34,18 +37,33 @@ function LoginInner() {
       dispatch(handleUser(loginUser.data));
       route.push("/dashboard");
     } else {
-      toast(loginUser.message, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
+      setResendEmail(loginUser?.statusCode === 403 ? data.email : "");
+      setError("password", {
+        type: "manual",
+        message: loginUser.message,
       });
     }
+  };
+
+  const handleResendVerification = async () => {
+    try {
+      const response = await resendVerification(resendEmail);
+      if (response.success) {
+        setStatusMessage(
+          "Verification email sent successfully. Please check your email."
+        );
+        reset();
+      } else {
+        setStatusMessage(
+          response.message || "Failed to resend verification email."
+        );
+      }
+    } catch (error) {
+      setStatusMessage(
+        "An error occurred while sending the verification email."
+      );
+    }
+    setResendEmail(""); // Hide resend button after the action
   };
 
   return (
@@ -59,7 +77,9 @@ function LoginInner() {
           className="mx-auto block rounded-full mb-4"
           onClick={() => route.push("/")}
         />
-        <h2 className="text-center lg:text-2xl md:text-xl text-lg font-medium text-white lg:mb-6 mb-4">Welcome back</h2>
+        <h2 className="text-center lg:text-2xl md:text-xl text-lg font-medium text-white lg:mb-6 mb-4">
+          Welcome back
+        </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col lg:gap-4 gap-3">
             <FormInput
@@ -80,12 +100,31 @@ function LoginInner() {
               register={register}
               required
             />
+            {resendEmail && (
+              <button
+                type="button"
+                className="underline text-green-400"
+                onClick={handleResendVerification}
+              >
+                Resend Verification Email
+              </button>
+            )}
+            {statusMessage && !resendEmail && (
+              <p
+                className={`text-center text-sm ${statusMessage.includes("successfully") ? "text-green-500" : "text-red-500"}`}
+              >
+                {statusMessage}
+              </p>
+            )}
             <button className="mt-4 w-full block bg-green-400 text-black p-2 md:text-base text-sm rounded-md uppercase font-semibold hover:bg-transparent hover:text-green-400 border border-solid border-green-400 transition-all duration-300 ease-in">
               Submit
             </button>
             <p className="text-white text-center md:text-base text-sm mb-0">
               If you don't have account{" "}
-              <Link href={"/signup"} className="text-[#E7C66C] underline font-medium">
+              <Link
+                href={"/signup"}
+                className="text-[#E7C66C] underline font-medium"
+              >
                 Register
               </Link>
             </p>
