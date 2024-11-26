@@ -7,6 +7,9 @@ export interface IUser extends Document {
   contact: string;
   salt: string;
   callCost: number;
+  isVerified: boolean; 
+  verificationToken: string | null;
+  verificationTokenExpires: Date | null;
 }
 export const userSchema = new Schema<IUser>(
   {
@@ -16,6 +19,9 @@ export const userSchema = new Schema<IUser>(
     salt: { type: String },
     password: { type: String, required: true },
     callCost: { type: Number, default: 0.059 },
+    isVerified: { type: Boolean, default: false },
+    verificationToken: { type: String, default: null },
+    verificationTokenExpires: { type: Date, default: null },
   },
   {
     toJSON: {
@@ -25,6 +31,9 @@ export const userSchema = new Schema<IUser>(
         delete ret.createdAt;
         delete ret.updatedAt;
         delete ret.__v;
+        delete ret.verificationToken;
+        delete ret.isVerified;
+        delete ret.verificationTokenExpires;
       },
     },
     timestamps: true,

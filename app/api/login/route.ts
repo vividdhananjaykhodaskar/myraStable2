@@ -18,6 +18,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Invalid email or password" }, { status: 409 });
     }
 
+    if (!existingUser.isVerified) {
+      return NextResponse.json({ message: "Email not verified. Please check your inbox for the verification link." }, { status: 403 });
+    }
+
     const hashedPassword = await encryptPassword(password, existingUser.salt);
     if (hashedPassword !== existingUser.password) {
       return NextResponse.json({ message: "Invalid email or password" }, { status: 401 });
