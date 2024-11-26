@@ -28,6 +28,16 @@ export async function POST(request: Request) {
       );
     }
 
+    if (
+      user.verificationTokenExpires &&
+      Date.now() - (user.verificationTokenExpires.getTime() - 15 * 60 * 1000) < 30000
+    ) {
+      return NextResponse.json(
+        { message: "A verification token was set recently. Please try again later." },
+        { status: 400 }
+      );
+    }
+
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const verificationTokenExpires = new Date(Date.now() + 15 * 60 * 1000);
 
