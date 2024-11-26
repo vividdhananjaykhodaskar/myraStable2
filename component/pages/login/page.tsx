@@ -19,7 +19,7 @@ const schema = yup.object().shape({
 function LoginInner() {
   const route = useRouter();
   const dispatch = useAppDispatch();
-  const [showResend, setShowResend] = useState(""); // State to track resend button visibility
+  const [resendEmail, setResendEmail] = useState(""); // State to track resend button visibility
   const [statusMessage, setStatusMessage] = useState(""); // State for status messages
   const {
     register,
@@ -37,7 +37,7 @@ function LoginInner() {
       dispatch(handleUser(loginUser.data));
       route.push("/dashboard");
     } else {
-      setShowResend(loginUser?.statusCode === 403 ? data.email : "");
+      setResendEmail(loginUser?.statusCode === 403 ? data.email : "");
       setError("password", {
         type: "manual",
         message: loginUser.message,
@@ -47,7 +47,7 @@ function LoginInner() {
 
   const handleResendVerification = async () => {
     try {
-      const response = await resendVerification(showResend);
+      const response = await resendVerification(resendEmail);
       if (response.success) {
         setStatusMessage(
           "Verification email sent successfully. Please check your email."
@@ -63,7 +63,7 @@ function LoginInner() {
         "An error occurred while sending the verification email."
       );
     }
-    setShowResend(""); // Hide resend button after the action
+    setResendEmail(""); // Hide resend button after the action
   };
 
   return (
@@ -100,7 +100,7 @@ function LoginInner() {
               register={register}
               required
             />
-            {showResend && (
+            {resendEmail && (
               <button
                 type="button"
                 className="underline text-green-400"
@@ -109,7 +109,7 @@ function LoginInner() {
                 Resend Verification Email
               </button>
             )}
-            {statusMessage && !showResend && (
+            {statusMessage && !resendEmail && (
               <p
                 className={`text-center text-sm ${statusMessage.includes("successfully") ? "text-green-500" : "text-red-500"}`}
               >
