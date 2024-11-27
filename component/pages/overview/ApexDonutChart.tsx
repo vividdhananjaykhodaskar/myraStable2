@@ -9,7 +9,6 @@ const ApexDonutChart = ({
   assistanceList: string[];
   noOfCallsArray: number[];
 }) => {
-  // Function to generate the color gradient based on the base color
   function generateColorGradient(baseColor: string, steps = 10) {
     return chroma
       .scale([
@@ -22,13 +21,22 @@ const ApexDonutChart = ({
       .reverse();
   }
 
+  function getTextColorBasedOnBackground(color: string) {
+    const luminance = chroma(color).luminance();
+    return luminance > 0.5 ? "#000000" : "#ffffff";
+  }
+
+  const textColors = generateColorGradient("#4ade80", assistanceList.length).map(
+    (color) => getTextColorBasedOnBackground(color)
+  );
+
   const setupOptions = {
     series: noOfCallsArray,
     options: {
       labels: assistanceList,
       chart: {
         height: 350,
-        type: "donut", // Keep donut type for pie chart
+        type: "donut", 
         toolbar: {
           show: true,
           tools: {
@@ -42,7 +50,7 @@ const ApexDonutChart = ({
       plotOptions: {
         pie: {
           donut: {
-            size: "60%", // Adjust size of the donut
+            size: "60%", 
           },
         },
       },
@@ -57,8 +65,8 @@ const ApexDonutChart = ({
         offsetY: -20,
         style: {
           fontSize: "12px",
+          colors: textColors,
         },
-        // Use 'color' dynamically inside the formatter function by overriding the color
         dropShadow: {
           enabled: true,
           blur: 3,
@@ -92,7 +100,7 @@ const ApexDonutChart = ({
         y: {
           formatter: undefined,
           title: {
-            formatter: (seriesName) => seriesName,
+            formatter: (seriesName:string) => seriesName,
           },
         },
         z: {
@@ -112,15 +120,15 @@ const ApexDonutChart = ({
           offsetY: 0,
         },
       },
-      colors: generateColorGradient("#4ade80", assistanceList.length), // Matching color for consistency
+      colors: generateColorGradient("#4ade80", assistanceList.length),
       legend: {
         position: "right",
         offsetY: 0,
         height: 230,
         labels: {
-          colors: ["#444"], // Consistent legend text color
+          colors: ["#444"],
         },
-        fontSize: "12px", // Matching font size for legend
+        fontSize: "12px",
       },
       title: {
         text: "Calls Distribution",
@@ -129,13 +137,13 @@ const ApexDonutChart = ({
         align: "left",
         style: {
           color: "#444",
-          fontSize: "16px", // Matching title font size
-          fontWeight: "bold", // Matching title font weight
+          fontSize: "16px",
+          fontWeight: "bold", 
         },
       },
       grid: {
         show: true,
-        borderColor: "#535962", // Matching grid border color
+        borderColor: "#535962", 
         position: "back",
       },
     },
