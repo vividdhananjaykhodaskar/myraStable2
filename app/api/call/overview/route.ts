@@ -6,10 +6,8 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    
     const { user } = await validateRequest();
- 
-    
+
     if (!user) {
       return NextResponse.json({ message: "unauthorized" }, { status: 401 });
     }
@@ -39,7 +37,6 @@ export async function GET(request: Request) {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    // Fetch all call data within the date range
     const callData = await CallCollectionModel.find({
       user_id: user.id,
       createdAt: { $gte: start, $lte: end },
@@ -47,17 +44,15 @@ export async function GET(request: Request) {
 
     const totalCalls = callData.length;
 
-    // Helper function to convert duration to seconds
     const timeStringToSeconds = (timeString: string): number => {
       const [hours, minutes, seconds] = timeString.split(":").map(Number);
       return hours * 3600 + minutes * 60 + seconds;
     };
 
-    // Calculate total minutes and prepare daily costs
     const costMap: Record<string, number> = {};
 
     const totalMinutes = callData.reduce((sum, item) => {
-      const duration = item.call_duration || getDuration(item); // Assuming getDuration is available
+      const duration = item.call_duration || getDuration(item); 
       const seconds = timeStringToSeconds(duration);
       const minutes = seconds / 60;
 
@@ -66,7 +61,6 @@ export async function GET(request: Request) {
       return sum + minutes;
     }, 0);
 
-    // Calculate costs for each day
     const costPerMinute = loggedInUser?.callCost ?? 0.059;
     for (const date in costMap) {
       costMap[date] *= costPerMinute;
@@ -75,25 +69,23 @@ export async function GET(request: Request) {
     const totalCost = totalMinutes * costPerMinute;
     const avgCostPerMin = totalMinutes > 0 ? totalCost / totalMinutes : 0;
 
-
-    
     const currStartDate = new Date(startDate);
     const currEndDate = new Date(endDate);
 
-    // Sorting costMap by the date
     const sortedDates = Object.keys(costMap).sort(
-      (a, b) => new Date(a) - new Date(b)
+      (a, b) => new Date(a).getTime() - new Date(b).getTime()
     );
 
     const currCostArray = [];
     const dates = [];
 
-    // Iterate through the date range from currStartDate to currEndDate
-    let currentDate = new Date(currStartDate);
+    let currentDate = new Date(currStartDate); 
     while (currentDate <= currEndDate) {
-      const currentDateString = currentDate.toISOString().split("T")[0]; // Convert to string "YYYY-MM-DD"
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, "0"); 
+      const day = String(currentDate.getDate()).padStart(2, "0");
+      const currentDateString = `${year}-${month}-${day}`; 
 
-      // Push the current date and cost (if exists, otherwise 0)
       dates.push(currentDateString);
       currCostArray.push(
         costMap[currentDateString] !== undefined
@@ -101,13 +93,19 @@ export async function GET(request: Request) {
           : 0
       );
 
-      // Move to the next day
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    console.log(dates,"<<<<<dates")
+    console.log(dates, "<<<<<dates");
     return NextResponse.json(
-      { totalCalls, totalMinutes, totalCost, avgCostPerMin, currCostArray, dates },
+      {
+        totalCalls,
+        totalMinutes,
+        totalCost,
+        avgCostPerMin,
+        currCostArray,
+        dates,
+      },
       { status: 200 }
     );
   } catch (error) {
