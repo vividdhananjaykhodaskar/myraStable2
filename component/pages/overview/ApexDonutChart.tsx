@@ -1,8 +1,27 @@
-import React, { useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
+import React from "react";
+import ReactApexChart from "react-apexcharts";
+import chroma from "chroma-js";
 
-const ApexDonutChart = ({assistanceList,noOfCallsArray}:{assistanceList:string[],noOfCallsArray:number[]}) => {
-  
+const ApexDonutChart = ({
+  assistanceList,
+  noOfCallsArray,
+}: {
+  assistanceList: string[];
+  noOfCallsArray: number[];
+}) => {
+  // Function to generate the color gradient based on the base color
+  function generateColorGradient(baseColor: string, steps = 10) {
+    return chroma
+      .scale([
+        chroma(baseColor).set("hsl.l", 0.9).hex(),
+        baseColor,
+        chroma(baseColor).set("hsl.l", 0.1).hex(),
+      ])
+      .mode("lab")
+      .colors(steps)
+      .reverse();
+  }
+
   const setupOptions = {
     series: noOfCallsArray,
     options: {
@@ -17,22 +36,35 @@ const ApexDonutChart = ({assistanceList,noOfCallsArray}:{assistanceList:string[]
           },
         },
       },
+      stroke: {
+        width: 0
+      },
       plotOptions: {
         pie: {
           donut: {
-            size: "50%", // Adjust size of the donut
+            size: "60%", // Adjust size of the donut
           },
         },
       },
       dataLabels: {
         enabled: true,
-        formatter: function (val: any) {
+        formatter: function (
+          val: number,
+          { seriesIndex }: { seriesIndex: number }
+        ) {
           return val ? val.toFixed(2) : "";
         },
         offsetY: -20,
         style: {
           fontSize: "12px",
-          colors: ["#304758"],
+        },
+        // Use 'color' dynamically inside the formatter function by overriding the color
+        dropShadow: {
+          enabled: true,
+          blur: 3,
+          left: 0,
+          top: 1,
+          opacity: 0.2,
         },
       },
       tooltip: {
@@ -60,7 +92,7 @@ const ApexDonutChart = ({assistanceList,noOfCallsArray}:{assistanceList:string[]
         y: {
           formatter: undefined,
           title: {
-            formatter: (seriesName: string) => seriesName,
+            formatter: (seriesName) => seriesName,
           },
         },
         z: {
@@ -80,7 +112,7 @@ const ApexDonutChart = ({assistanceList,noOfCallsArray}:{assistanceList:string[]
           offsetY: 0,
         },
       },
-      // colors: generateColorGradient("#4ade80", 6), // Matching color for consistency
+      colors: generateColorGradient("#4ade80", assistanceList.length), // Matching color for consistency
       legend: {
         position: "right",
         offsetY: 0,
@@ -108,7 +140,6 @@ const ApexDonutChart = ({assistanceList,noOfCallsArray}:{assistanceList:string[]
       },
     },
   };
-  
 
   return (
     <div>

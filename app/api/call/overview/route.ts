@@ -116,11 +116,24 @@ export async function GET(request: Request) {
     // Create `assistance` and `noOfCalls` arrays
     const assistance: string[] = [];
     const noOfCalls: number[] = [];
+
+    // Populate assistance and noOfCalls
     assistantIdGroup.forEach((item) => {
       assistance.push(item._id);
       noOfCalls.push(item.count);
     });
 
+    // Sort by noOfCalls in descending order
+    const sortedData = assistance
+      .map((assistanceId, index) => ({
+        assistanceId,
+        noOfCalls: noOfCalls[index],
+      }))
+      .sort((a, b) => b.noOfCalls - a.noOfCalls);
+
+    // Rebuild the sorted arrays
+    const sortedAssistance = sortedData.map((item) => item.assistanceId);
+    const sortedNoOfCalls = sortedData.map((item) => item.noOfCalls);
     return NextResponse.json(
       {
         totalCalls,
@@ -129,8 +142,8 @@ export async function GET(request: Request) {
         avgCostPerMin,
         currCostArray,
         dates,
-        assistance,
-        noOfCalls,
+        assistance:sortedAssistance,
+        noOfCalls:sortedNoOfCalls,
       },
       { status: 200 }
     );
