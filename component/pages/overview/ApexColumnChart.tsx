@@ -19,12 +19,18 @@ const ApexColumnChart = ({
       chart: {
         height: 350,
         type: "bar",
+        toolbar: {
+          show: true,
+          tools: {
+            download: false
+          }
+        },
       },
       plotOptions: {
         bar: {
           borderRadius: 3,
           dataLabels: {
-            position: "top", // top, center, bottom
+            position: "top",
           },
         },
       },
@@ -58,6 +64,7 @@ const ApexColumnChart = ({
             });
           },
         },
+        tickAmount: 10,
         crosshairs: {
           fill: {
             type: "gradient",
@@ -82,9 +89,9 @@ const ApexColumnChart = ({
           show: false,
         },
         labels: {
-          show: false,
+          show: true,
           formatter: function (val: any) {
-            return val + "%";
+            return val + " $";
           },
         },
       },
