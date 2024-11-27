@@ -142,14 +142,22 @@ const ApexColumnChart = ({
         },
       },
       title: {
-        text: "Monthly Call Cost",
-        floating: true,
-        offsetY: 330,
-        align: "center",
+        text: "Daily Call Cost Breakdown",
+        floating: false, // Set to false to prevent floating and make it more aligned with the chart area
+        offsetY: 0, // Set to 0 to position the title at the top
+        align: "left", // Align the title to the left
         style: {
           color: "#444",
+          fontSize: '16px', // Optional: adjust font size if needed
+          fontWeight: 'bold', // Optional: adjust font weight if needed
         },
       },
+      
+      grid: {
+        show: true, 
+        borderColor: '#535962', 
+        position: 'back', 
+      }
     },
   };
 

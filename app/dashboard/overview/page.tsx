@@ -135,7 +135,7 @@ const Overview = () => {
           </p>
         </div>
       </div>
-      <div className="w-2/4">
+      <div className="w-2/4 mt-3">
         <ApexColumnChart datesArray={datesArray} costArray={costArray} />
       </div>
     </div>
