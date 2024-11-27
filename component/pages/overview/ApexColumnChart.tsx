@@ -147,7 +147,7 @@ const ApexColumnChart = ({
         offsetY: 0, // Set to 0 to position the title at the top
         align: "left", // Align the title to the left
         style: {
-          color: "#444",
+          color: "#FFFFFF",
           fontSize: '16px', // Optional: adjust font size if needed
           fontWeight: 'bold', // Optional: adjust font weight if needed
         },

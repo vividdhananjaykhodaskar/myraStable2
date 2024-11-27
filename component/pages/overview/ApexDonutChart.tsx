@@ -126,9 +126,13 @@ const ApexDonutChart = ({
         offsetY: 0,
         height: 230,
         labels: {
-          colors: ["#444"],
+          colors: ["#ffffff"],
+          
         },
         fontSize: "12px",
+        markers: {
+          offsetX: -8,
+      },
       },
       title: {
         text: "Calls Distribution",
@@ -136,7 +140,7 @@ const ApexDonutChart = ({
         offsetY: 0,
         align: "left",
         style: {
-          color: "#444",
+          color: "#FFFFFF",
           fontSize: "16px",
           fontWeight: "bold", 
         },

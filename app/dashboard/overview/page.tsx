@@ -90,7 +90,7 @@ const Overview = () => {
   }, [start, end]);
 
   return (
-    <div className="p-4 flex-grow">
+    <div className="p-4 flex-grow w-3/4">
       <div className="flex w-fit flex-row  gap-1 bg-[rgba(148,148,148,0.5)] p-2 rounded-md">
         <Image src="/calender.svg" alt="" width={20} height={20} />
         <p className="text-sm text-gray-200 justify-center">Billing Period</p>
@@ -111,42 +111,42 @@ const Overview = () => {
         </button>
       </div>
 
-      <div className="w-full gap-2 grid  lg:grid-cols-4 md:grid-cols-2 grid-cols-1  pt-3">
-        <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
-          <p className="px-3 py-1 text-md text-slate-400">No. of Calls</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">
+      <div className="w-full gap-2 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 pt-3 mb-6">
+        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+          <p className="text-md text-slate-400">No. of Calls</p>
+          <p className="text-lg md:text-2xl 2xl:text-3xl text-slate-100">
             {data["totalCalls"]}
           </p>
         </div>
 
-        <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
-          <p className="px-3 py-1 text-md text-slate-400">Cost</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">
+        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+          <p className="text-md text-slate-400">Cost</p>
+          <p className="text-lg md:text-2xl 2xl:text-3xl text-slate-100">
             ${data["totalCost"].toFixed(2)}
           </p>
         </div>
 
-        <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
-          <p className="px-3 py-1 text-md text-slate-400">Call Minutes</p>
-          <p className="px-3 py-2   text-3xl text-slate-100">
+        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+          <p className="text-md text-slate-400">Call Minutes</p>
+          <p className="text-lg md:text-2xl 2xl:text-3xl text-slate-100">
             {data["totalMinutes"].toFixed(2)}
           </p>
         </div>
 
-        <div className="grow h-32  justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
-          <p className="px-3 py-1 text-md text-slate-400">
+        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+          <p className="text-md text-slate-400">
             Average Cost Per Minutes
           </p>
-          <p className="px-3 py-2   text-3xl text-slate-100">
-            $ {data["avgCostPerMin"]}
+          <p className="text-lg md:text-2xl 2xl:text-3xl text-slate-100">
+            $ {data["avgCostPerMin"].toFixed(2)}
           </p>
         </div>
       </div>
-      <div className="flex flex-row">
-        <div className="w-2/4 mt-3 p-0">
+      <div className="flex flex-wrap flex-row">
+        <div className="w-full md:w-2/4 mt-3 p-0">
           <ApexColumnChart datesArray={datesArray} costArray={costArray} />
         </div>{" "}
-        <div className="w-2/4 mt-3 p-0">
+        <div className="w-full md:w-2/4 mt-3 p-0">
           <ApexDonutChart noOfCallsArray={noOfCallsArray||[]} assistanceList={assistanceList}/>
         </div>
       </div>
