@@ -142,11 +142,11 @@ const Overview = () => {
           </p>
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row w-full">
-        <div className="w-auto lg:w-2/4 mt-3 p-0">
+      <div className="flex flex-row">
+        <div className="w-2/4 mt-3 p-0">
           <ApexColumnChart datesArray={datesArray} costArray={costArray} />
         </div>{" "}
-        <div className="w-auto lg:w-2/4 mt-3 p-0">
+        <div className="w-2/4 mt-3 p-0">
           <ApexDonutChart noOfCallsArray={noOfCallsArray||[]} assistanceList={assistanceList}/>
         </div>
       </div>
