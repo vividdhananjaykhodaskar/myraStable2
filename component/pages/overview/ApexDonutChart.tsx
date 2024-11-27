@@ -126,7 +126,7 @@ const ApexDonutChart = ({
         offsetY: 0,
         height: 230,
         labels: {
-          colors: ["#ffffff"],
+          colors: "#ffffff",
           
         },
         fontSize: "12px",
