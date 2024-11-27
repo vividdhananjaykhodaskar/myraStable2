@@ -11,7 +11,7 @@ const ApexColumnChart = ({
   const chartOption = {
     series: [
       {
-        name: "Inflation",
+        name: "Cost",
         data: costArray,
       },
     ],
@@ -142,7 +142,7 @@ const ApexColumnChart = ({
         },
       },
       title: {
-        text: "Monthly Inflation in Argentina, 2002",
+        text: "Monthly Call Cost",
         floating: true,
         offsetY: 330,
         align: "center",
