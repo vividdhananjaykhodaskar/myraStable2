@@ -1,5 +1,6 @@
 "use client";
 import ApexColumnChart from "@/component/pages/overview/ApexColumnChart";
+import ApexDonutChart from "@/component/pages/overview/ApexDonutChart";
 import { getCallOverview } from "@/service/prservice";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
@@ -135,8 +136,13 @@ const Overview = () => {
           </p>
         </div>
       </div>
-      <div className="w-2/4 mt-3 p-0">
-        <ApexColumnChart datesArray={datesArray} costArray={costArray} />
+      <div className="flex flex-row">
+        <div className="w-2/4 mt-3 p-0">
+          <ApexColumnChart datesArray={datesArray} costArray={costArray} />
+        </div>{" "}
+        <div className="w-2/4 mt-3 p-0">
+          <ApexDonutChart />
+        </div>
       </div>
     </div>
   );

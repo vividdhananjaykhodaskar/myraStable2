@@ -8,7 +8,7 @@ import Loader from "@/component/Loader";
 import { createCall, CreateOrder, createPosOrder, endCall, updateCall } from "@/service/prservice";
 import moment from "moment";
 import { useAppSelector } from "@/redux";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { toast, Bounce } from "react-toastify";
 
 type DeviceType = "desktop" | "iOS" | "Android";
@@ -24,6 +24,7 @@ const App = ({
   handleCallState: (value: string | boolean, type: string) => void;
   messages: any;
 }) => {
+  const { assistant_id } = useParams();
   const param = useSearchParams();
   const callIntervalRef = useRef<any>(null);
   const stateRef = useRef<any>(null);
@@ -352,7 +353,7 @@ const App = ({
         }, 1000);
         const callData = await createCall({
           completion_model: currentAssistant?.groq_model,
-          assistant_id: currentAssistant?._id,
+          assistant:assistant_id,
           user_id: currentAssistant?.user_id,
           character_count: currentAssistant?.welcome_message.length ?? 0,
           welcomeMessage: currentAssistant?.welcome_message ?? "",
