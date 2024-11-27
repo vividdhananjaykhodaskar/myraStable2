@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     const costMap: Record<string, number> = {};
 
     const totalMinutes = callData.reduce((sum, item) => {
-      const duration = item.call_duration || getDuration(item); 
+      const duration = item.call_duration || getDuration(item);
       const seconds = timeStringToSeconds(duration);
       const minutes = seconds / 60;
 
@@ -79,12 +79,12 @@ export async function GET(request: Request) {
     const currCostArray = [];
     const dates = [];
 
-    let currentDate = new Date(currStartDate); 
+    let currentDate = new Date(currStartDate);
     while (currentDate <= currEndDate) {
       const year = currentDate.getFullYear();
-      const month = String(currentDate.getMonth() + 1).padStart(2, "0"); 
+      const month = String(currentDate.getMonth() + 1).padStart(2, "0");
       const day = String(currentDate.getDate()).padStart(2, "0");
-      const currentDateString = `${year}-${month}-${day}`; 
+      const currentDateString = `${year}-${month}-${day}`;
 
       dates.push(currentDateString);
       currCostArray.push(
@@ -95,7 +95,32 @@ export async function GET(request: Request) {
 
       currentDate.setDate(currentDate.getDate() + 1);
     }
-    
+
+    // Grouping CallCollections by `assistant_id`
+    const assistantIdGroup = await CallCollectionModel.aggregate([
+      {
+        $match: {
+          user_id: `${user.id}`,
+          createdAt: { $gte: start, $lte: end },
+          assistant: { $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: "$assistant",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Create `assistance` and `noOfCalls` arrays
+    const assistance: string[] = [];
+    const noOfCalls: number[] = [];
+    assistantIdGroup.forEach((item) => {
+      assistance.push(item._id);
+      noOfCalls.push(item.count);
+    });
+
     return NextResponse.json(
       {
         totalCalls,
@@ -104,6 +129,8 @@ export async function GET(request: Request) {
         avgCostPerMin,
         currCostArray,
         dates,
+        assistance,
+        noOfCalls,
       },
       { status: 200 }
     );

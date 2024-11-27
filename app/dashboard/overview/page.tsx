@@ -10,13 +10,14 @@ const Overview = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [costArray, setCostArray] = useState<any>([]);
   const [datesArray, setDatesArray] = useState<any>([]);
+  const [assistanceList, setAssistanceList] = useState<string[]>([]);
+  const [noOfCallsArray, setNoOfCallsArray] = useState<number[]>([]);
+  
   const [data, setData] = useState({
     totalCalls: 0,
     totalCost: 0,
     totalMinutes: 0,
     avgCostPerMin: 0,
-    currCostArray: [],
-    dates: [],
   });
 
   // Function to get the start and end of the current month
@@ -62,16 +63,21 @@ const Overview = () => {
         totalCost,
         totalMinutes,
         avgCostPerMin,
-        costMap,
         currCostArray,
         dates,
+        assistance,
+        noOfCalls,
       } = await getCallOverview({ start_date, end_date });
-      setData({ totalCalls, totalCost, totalMinutes, avgCostPerMin, costMap });
-
-      // console.log("costMap>>>>>>>>>>>>", costMap);
-
+      setData({
+        totalCalls,
+        totalCost,
+        totalMinutes,
+        avgCostPerMin,
+      });
       setDatesArray(dates);
       setCostArray(currCostArray);
+      setNoOfCallsArray(noOfCalls||[]);
+      setAssistanceList(assistance||[]);
       // console.log("Dates:", dates);
       // console.log("Costs:", costArray);
     } catch (error) {
@@ -141,7 +147,7 @@ const Overview = () => {
           <ApexColumnChart datesArray={datesArray} costArray={costArray} />
         </div>{" "}
         <div className="w-2/4 mt-3 p-0">
-          <ApexDonutChart />
+          <ApexDonutChart noOfCallsArray={noOfCallsArray||[]} assistanceList={assistanceList}/>
         </div>
       </div>
     </div>

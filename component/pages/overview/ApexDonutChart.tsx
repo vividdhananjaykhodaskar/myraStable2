@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
-const ApexDonutChart = () => {
-  const [chartOptions, setChartOptions] = useState({
-    series: [90, 55, 41, 17, 15],
+const ApexDonutChart = ({assistanceList,noOfCallsArray}:{assistanceList:string[],noOfCallsArray:number[]}) => {
+  const setupOptions= {
+    series: noOfCallsArray,
     options: {
       chart: {
         type: 'donut',
+      },
+      labels: assistanceList,
+      legend: {
+        position: 'right',
+        offsetY: 0,
+        height: 230,
       },
       responsive: [
         {
@@ -23,14 +29,14 @@ const ApexDonutChart = () => {
         },
       ],
     },
-  });
+  };
 
   return (
     <div>
       <div id="chart">
         <ReactApexChart
-          options={chartOptions.options}
-          series={chartOptions.series}
+          options={setupOptions.options}
+          series={setupOptions.series}
           type="donut"
           height={350}
         />
