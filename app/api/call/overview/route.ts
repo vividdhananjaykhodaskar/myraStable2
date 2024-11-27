@@ -1,7 +1,7 @@
 import { validateRequest } from "@/lib/auth";
 import { getDuration } from "@/lib/utils";
 import connectMongo from "@/mongodb/connectmongoDb";
-import { CallCollectionModel, User } from "@/mongodb/models/mainModel";
+import { CallCollectionModel, ConfigurationModel, User } from "@/mongodb/models/mainModel";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -96,7 +96,6 @@ export async function GET(request: Request) {
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    // Grouping CallCollections by `assistant_id`
     const assistantIdGroup = await CallCollectionModel.aggregate([
       {
         $match: {
@@ -112,28 +111,36 @@ export async function GET(request: Request) {
         },
       },
     ]);
-
-    // Create `assistance` and `noOfCalls` arrays
+    
     const assistance: string[] = [];
     const noOfCalls: number[] = [];
-
-    // Populate assistance and noOfCalls
+    
     assistantIdGroup.forEach((item) => {
       assistance.push(item._id);
       noOfCalls.push(item.count);
     });
+    
 
-    // Sort by noOfCalls in descending order
+    const assistantNames = await ConfigurationModel.find({
+      user_id: `${user.id}`, 
+    }).exec();
+    
+    const assistantNameMap = assistantNames.reduce((acc, item) => {
+      acc[item._id] = item.assistent_name;
+      return acc;
+    }, {});
+    
     const sortedData = assistance
-      .map((assistanceId, index) => ({
-        assistanceId,
+      .map((assistantId, index) => ({
+        assistanceName: assistantNameMap[assistantId] || "Unknown", 
         noOfCalls: noOfCalls[index],
       }))
       .sort((a, b) => b.noOfCalls - a.noOfCalls);
+    
 
-    // Rebuild the sorted arrays
-    const sortedAssistance = sortedData.map((item) => item.assistanceId);
+    const sortedAssistance = sortedData.map((item) => item.assistanceName);
     const sortedNoOfCalls = sortedData.map((item) => item.noOfCalls);
+    
     return NextResponse.json(
       {
         totalCalls,
@@ -142,8 +149,8 @@ export async function GET(request: Request) {
         avgCostPerMin,
         currCostArray,
         dates,
-        assistance:sortedAssistance,
-        noOfCalls:sortedNoOfCalls,
+        assistance: sortedAssistance,
+        noOfCalls: sortedNoOfCalls,
       },
       { status: 200 }
     );
