@@ -45,6 +45,54 @@ const ApexColumnChart = ({
           colors: ["#304758"],
         },
       },
+      tooltip: {
+        enabled: true,
+        enabledOnSeries: undefined,
+        shared: true,
+        followCursor: false,
+        intersect: false,
+        inverseOrder: false,
+        custom: undefined,
+        hideEmptySeries: true,
+        fillSeriesColor: false,
+        theme: false,
+        style: {
+          fontSize: '12px',
+          fontFamily: undefined
+        },
+        onDatasetHover: {
+            highlightDataSeries: false,
+        },
+        x: {
+            show: true,
+            format: 'dd MMM',
+            formatter: undefined,
+        },
+        y: {
+            formatter: undefined,
+            title: {
+                formatter: (seriesName:string) => seriesName,
+            },
+            
+        },
+        z: {
+            formatter: undefined,
+            title: 'Size: '
+        },
+        marker: {
+            show: true,
+        },
+        items: {
+           display: 'flex',
+        },
+        fixed: {
+            enabled: false,
+            position: 'topRight',
+            offsetX: 0,
+            offsetY: 0,
+        },
+
+      },
       colors: ["#4ade80"],
       xaxis: {
         categories: datesArray,
@@ -77,9 +125,7 @@ const ApexColumnChart = ({
             },
           },
         },
-        tooltip: {
-          enabled: true,
-        },
+        
       },
       yaxis: {
         axisBorder: {

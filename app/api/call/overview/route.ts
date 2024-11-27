@@ -89,7 +89,7 @@ export async function GET(request: Request) {
       dates.push(currentDateString);
       currCostArray.push(
         costMap[currentDateString] !== undefined
-          ? costMap[currentDateString]
+          ? costMap[currentDateString].toFixed(2)
           : 0
       );
 
