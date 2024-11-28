@@ -40,6 +40,7 @@ export async function GET(request: Request) {
     const callData = await CallCollectionModel.find({
       user_id: user.id,
       createdAt: { $gte: start, $lte: end },
+      assistant: { $ne: null },
     });
 
     const totalCalls = callData.length;
