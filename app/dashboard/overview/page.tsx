@@ -8,11 +8,19 @@ import { useEffect, useMemo, useState } from "react";
 const Overview = () => {
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [costArray, setCostArray] = useState<any>([]);
-  const [datesArray, setDatesArray] = useState<any>([]);
-  const [assistanceList, setAssistanceList] = useState<string[]>([]);
-  const [noOfCallsArray, setNoOfCallsArray] = useState<number[]>([]);
-  
+
+  // State for bar chart data
+  const [barChartData, setBarChartData] = useState({
+    datesArray: [] as string[],
+    costArray: [] as number[],
+  });
+
+  // State for donut chart data
+  const [donutChartData, setDonutChartData] = useState({
+    assistanceList: [] as string[],
+    noOfCallsArray: [] as number[],
+  });
+
   const [data, setData] = useState({
     totalCalls: 0,
     totalCost: 0,
@@ -20,11 +28,9 @@ const Overview = () => {
     avgCostPerMin: 0,
   });
 
-  // Function to get the start and end of the current month
-  const getBillingPeriod = (date: any) => {
+  const getBillingPeriod = (date: Date) => {
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-
     return {
       start: start.toLocaleDateString(),
       end: end.toLocaleDateString(),
@@ -37,7 +43,6 @@ const Overview = () => {
     setCurrentDate(newDate);
   };
 
-  // Function to handle going to the next month
   const goToNextMonth = () => {
     const newDate = new Date(currentDate);
     newDate.setMonth(currentDate.getMonth() + 1);
@@ -74,12 +79,16 @@ const Overview = () => {
         totalMinutes,
         avgCostPerMin,
       });
-      setDatesArray(dates);
-      setCostArray(currCostArray);
-      setNoOfCallsArray(noOfCalls||[]);
-      setAssistanceList(assistance||[]);
-      // console.log("Dates:", dates);
-      // console.log("Costs:", costArray);
+
+      setBarChartData({
+        datesArray: dates || [],
+        costArray: currCostArray || [],
+      });
+
+      setDonutChartData({
+        assistanceList: assistance || [],
+        noOfCallsArray: noOfCalls || [],
+      });
     } catch (error) {
       console.error("Error fetching call logs:", error);
     }
@@ -91,7 +100,7 @@ const Overview = () => {
 
   return (
     <div className="p-4 flex-grow w-3/4">
-      <div className="flex w-fit flex-row  gap-1 bg-[rgba(148,148,148,0.5)] p-2 rounded-md">
+      <div className="flex w-fit flex-row gap-1 bg-[rgba(148,148,148,0.5)] p-2 rounded-md">
         <Image src="/calender.svg" alt="" width={20} height={20} />
         <p className="text-sm text-gray-200 justify-center">Billing Period</p>
         <a href="" className="font-bold">
@@ -112,42 +121,47 @@ const Overview = () => {
       </div>
 
       <div className="w-full gap-2 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 pt-3 mb-6">
-        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)] rounded-lg">
           <p className="text-md text-slate-400">No. of Calls</p>
           <p className="text-lg md:text-2xl 2xl:text-3xl text-slate-100">
-            {data["totalCalls"]}
+            {data.totalCalls}
           </p>
         </div>
 
-        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)] rounded-lg">
           <p className="text-md text-slate-400">Cost</p>
           <p className="text-lg md:text-2xl 2xl:text-3xl text-slate-100">
-            ${data["totalCost"].toFixed(2)}
+            ${data.totalCost.toFixed(2)}
           </p>
         </div>
 
-        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
+        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)] rounded-lg">
           <p className="text-md text-slate-400">Call Minutes</p>
           <p className="text-lg md:text-2xl 2xl:text-3xl text-slate-100">
-            {data["totalMinutes"].toFixed(2)}
+            {data.totalMinutes.toFixed(2)}
           </p>
         </div>
 
-        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)]   rounded-lg">
-          <p className="text-md text-slate-400">
-            Average Cost Per Minutes
-          </p>
+        <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)] rounded-lg">
+          <p className="text-md text-slate-400">Average Cost Per Minute</p>
           <p className="text-lg md:text-2xl 2xl:text-3xl text-slate-100">
-            $ {data["avgCostPerMin"].toFixed(3)}
+            ${data.avgCostPerMin.toFixed(3)}
           </p>
         </div>
       </div>
+
       <div className="flex flex-wrap flex-row">
         <div className="w-full md:w-2/4 mt-3 p-0">
-          <ApexColumnChart datesArray={datesArray} costArray={costArray} />
-        </div>{" "}
+          <ApexColumnChart
+            datesArray={barChartData.datesArray}
+            costArray={barChartData.costArray}
+          />
+        </div>
         <div className="w-full md:w-2/4 mt-3 p-0">
-          <ApexDonutChart noOfCallsArray={noOfCallsArray||[]} assistanceList={assistanceList}/>
+          <ApexDonutChart
+            noOfCallsArray={donutChartData.noOfCallsArray}
+            assistanceList={donutChartData.assistanceList}
+          />
         </div>
       </div>
     </div>
