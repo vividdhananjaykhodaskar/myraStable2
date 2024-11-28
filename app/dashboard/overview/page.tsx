@@ -138,7 +138,7 @@ const Overview = () => {
             Average Cost Per Minutes
           </p>
           <p className="text-lg md:text-2xl 2xl:text-3xl text-slate-100">
-            $ {data["avgCostPerMin"].toFixed(2)}
+            $ {data["avgCostPerMin"].toFixed(3)}
           </p>
         </div>
       </div>
