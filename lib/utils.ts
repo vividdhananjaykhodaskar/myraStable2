@@ -23,14 +23,16 @@ const timeStringToSeconds = (timeString: string): number => {
   return hours * 3600 + minutes * 60 + seconds;
 };
 
-export function calculateTotalMinutes(callData:any, costMap:any) {
+export function calculateTotalMinutes(callData:any, costMap:any = null) {
   return callData.reduce((sum:number, item:any) => {
     const duration = item.call_duration || getDuration(item);
     const seconds = timeStringToSeconds(duration);
     const minutes = seconds / 60;
 
-    const date = new Date(item.createdAt).toISOString().split("T")[0];
-    costMap[date] = (costMap[date] || 0) + minutes;
+    if(costMap){
+      const date = new Date(item.createdAt).toISOString().split("T")[0];
+      costMap[date] = (costMap[date] || 0) + minutes;
+    }
     return sum + minutes;
   }, 0);
 }
