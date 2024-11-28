@@ -56,12 +56,6 @@ const ApexDonutChart = ({
       },
       dataLabels: {
         enabled: true,
-        formatter: function (
-          val: number,
-          { seriesIndex }: { seriesIndex: number }
-        ) {
-          return val ? val.toFixed(2) : "";
-        },
         offsetY: -20,
         style: {
           fontSize: "12px",
