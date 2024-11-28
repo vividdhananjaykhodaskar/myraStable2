@@ -1,5 +1,5 @@
 import { validateRequest } from "@/lib/auth";
-import { calculateTotalMinutes, getDuration } from "@/lib/utils";
+import { calculateTotalMinutes } from "@/lib/utils";
 import connectMongo from "@/mongodb/connectmongoDb";
 import {
   CallCollectionModel,
@@ -113,6 +113,7 @@ export async function GET(request: Request) {
               user_id: "$user_id",
               conversation: "$conversation",
               assistant: "$assistant",
+              createdAt: "$createdAt",
             },
           },
         },
@@ -130,6 +131,7 @@ export async function GET(request: Request) {
     // Process the data similarly to your original pipeline
     const assistance: string[] = [];
     const noOfCalls: number[] = [];
+    const perAssistantCost: number[] = [];
     const assistantNames = await ConfigurationModel.find({
       user_id: `${user.id}`,
     }).exec();
@@ -141,6 +143,11 @@ export async function GET(request: Request) {
     assistantIdGroupCombined.forEach((item) => {
       assistance.push(item.assistant_id);
       noOfCalls.push(item.count);
+      perAssistantCost.push(
+        calculateTotalMinutes(item.calls)
+          ? calculateTotalMinutes(item.calls) * costPerMinute
+          : -1
+      );
     });
 
     // Sorting by the number of calls in descending order
@@ -164,7 +171,7 @@ export async function GET(request: Request) {
         dates,
         assistance: sortedAssistance,
         noOfCalls: sortedNoOfCalls,
-        assistantIdGroupByAssistant: assistantIdGroupCombined, // Return the combined result
+        perAssistantCost
       },
       { status: 200 }
     );
