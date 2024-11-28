@@ -1,5 +1,5 @@
 import { validateRequest } from "@/lib/auth";
-import { getDuration } from "@/lib/utils";
+import { calculateTotalMinutes, getDuration } from "@/lib/utils";
 import connectMongo from "@/mongodb/connectmongoDb";
 import { CallCollectionModel, ConfigurationModel, User } from "@/mongodb/models/mainModel";
 import { NextResponse } from "next/server";
@@ -45,22 +45,10 @@ export async function GET(request: Request) {
 
     const totalCalls = callData.length;
 
-    const timeStringToSeconds = (timeString: string): number => {
-      const [hours, minutes, seconds] = timeString.split(":").map(Number);
-      return hours * 3600 + minutes * 60 + seconds;
-    };
-
     const costMap: Record<string, number> = {};
-
-    const totalMinutes = callData.reduce((sum, item) => {
-      const duration = item.call_duration || getDuration(item);
-      const seconds = timeStringToSeconds(duration);
-      const minutes = seconds / 60;
-
-      const date = new Date(item.createdAt).toISOString().split("T")[0];
-      costMap[date] = (costMap[date] || 0) + minutes;
-      return sum + minutes;
-    }, 0);
+    
+    const totalMinutes = calculateTotalMinutes(callData, costMap);
+    
 
     const costPerMinute = loggedInUser?.callCost ?? 0.059;
     for (const date in costMap) {
@@ -116,6 +104,8 @@ export async function GET(request: Request) {
     const assistance: string[] = [];
     const noOfCalls: number[] = [];
     
+    console.log(assistantIdGroup)
+
     assistantIdGroup.forEach((item) => {
       assistance.push(item._id);
       noOfCalls.push(item.count);
@@ -152,6 +142,7 @@ export async function GET(request: Request) {
         dates,
         assistance: sortedAssistance,
         noOfCalls: sortedNoOfCalls,
+        // perAssistantCost
       },
       { status: 200 }
     );
