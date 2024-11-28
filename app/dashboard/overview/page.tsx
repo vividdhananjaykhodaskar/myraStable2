@@ -19,6 +19,7 @@ const Overview = () => {
   const [donutChartData, setDonutChartData] = useState({
     assistanceList: [] as string[],
     noOfCallsArray: [] as number[],
+    perAssitanceCostArray: [] as number[],
   });
 
   const [data, setData] = useState({
@@ -88,6 +89,7 @@ const Overview = () => {
       setDonutChartData({
         assistanceList: assistance || [],
         noOfCallsArray: noOfCalls || [],
+        perAssitanceCostArray:[2]
       });
     } catch (error) {
       console.error("Error fetching call logs:", error);
@@ -161,6 +163,7 @@ const Overview = () => {
           <ApexDonutChart
             noOfCallsArray={donutChartData.noOfCallsArray}
             assistanceList={donutChartData.assistanceList}
+            perAssitanceCostArray={donutChartData.perAssitanceCostArray}
           />
         </div>
       </div>
