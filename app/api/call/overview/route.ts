@@ -143,11 +143,7 @@ export async function GET(request: Request) {
     assistantIdGroupCombined.forEach((item) => {
       assistance.push(item.assistant_id);
       noOfCalls.push(item.count);
-      perAssistantCost.push(
-        calculateTotalMinutes(item.calls)
-          ? calculateTotalMinutes(item.calls) * costPerMinute
-          : -1
-      );
+      perAssistantCost.push(calculateTotalMinutes(item.calls) * costPerMinute);
     });
 
     // Sorting by the number of calls in descending order
@@ -171,7 +167,7 @@ export async function GET(request: Request) {
         dates,
         assistance: sortedAssistance,
         noOfCalls: sortedNoOfCalls,
-        perAssistantCost
+        perAssistantCost,
       },
       { status: 200 }
     );
