@@ -5,11 +5,11 @@ import chroma from "chroma-js";
 const ApexDonutChart = ({
   assistanceList,
   noOfCallsArray,
-  perAssitanceCostArray,
+  perAssistantCostArray,
 }: {
   assistanceList: string[];
   noOfCallsArray: number[];
-  perAssitanceCostArray: number[];
+  perAssistantCostArray: number[];
 }) => {
   const [activeTab, setActiveTab] = useState<"calls" | "cost">("calls");
 
@@ -36,7 +36,7 @@ const ApexDonutChart = ({
   ).map((color) => getTextColorBasedOnBackground(color));
 
   const chartData =
-    activeTab === "calls" ? noOfCallsArray : perAssitanceCostArray;
+    activeTab === "calls" ? noOfCallsArray : perAssistantCostArray;
   const chartTitle =
     activeTab === "calls" ? "Calls Distribution" : "Cost Distribution";
 
