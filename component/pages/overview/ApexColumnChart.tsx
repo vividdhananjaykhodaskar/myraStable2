@@ -42,7 +42,7 @@ const ApexColumnChart = ({
         offsetY: -20,
         style: {
           fontSize: "12px",
-          colors: ["#304758"],
+          colors: ["#a3a3a3"],
         },
       },
       tooltip: {
@@ -104,6 +104,9 @@ const ApexColumnChart = ({
           show: false,
         },
         labels: {
+          style:{
+            colors: "#a3a3a3",
+          },
           formatter: function (value:any) {
             const date = new Date(value);
             return date.toLocaleDateString("en-US", {
@@ -136,6 +139,9 @@ const ApexColumnChart = ({
         },
         labels: {
           show: true,
+          style:{
+            colors: "#a3a3a3",
+          },
           formatter: function (val: any) {
             return val + " $";
           },
