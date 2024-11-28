@@ -1,7 +1,11 @@
 import { validateRequest } from "@/lib/auth";
 import { calculateTotalMinutes, getDuration } from "@/lib/utils";
 import connectMongo from "@/mongodb/connectmongoDb";
-import { CallCollectionModel, ConfigurationModel, User } from "@/mongodb/models/mainModel";
+import {
+  CallCollectionModel,
+  ConfigurationModel,
+  User,
+} from "@/mongodb/models/mainModel";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -40,15 +44,14 @@ export async function GET(request: Request) {
     const callData = await CallCollectionModel.find({
       user_id: user.id,
       createdAt: { $gte: start, $lte: end },
-      assistant: { $ne: null },// TODO: remove this in the future and handle the error if the assistant id is null
+      assistant: { $ne: null }, // TODO: remove this in the future and handle the error if the assistant id is null
     });
 
     const totalCalls = callData.length;
 
     const costMap: Record<string, number> = {};
-    
+
     const totalMinutes = calculateTotalMinutes(callData, costMap);
-    
 
     const costPerMinute = loggedInUser?.callCost ?? 0.059;
     for (const date in costMap) {
@@ -85,7 +88,7 @@ export async function GET(request: Request) {
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    const assistantIdGroup = await CallCollectionModel.aggregate([
+    const assistantIdGroupCombined = await CallCollectionModel.aggregate([
       {
         $match: {
           user_id: `${user.id}`,
@@ -95,43 +98,62 @@ export async function GET(request: Request) {
       },
       {
         $group: {
-          _id: "$assistant",
-          count: { $sum: 1 },
+          _id: "$assistant", // Group by assistant_id
+          count: { $sum: 1 }, // Count the number of calls per assistant
+          calls: {
+            $push: {
+              call_end_time: "$call_end_time",
+              call_duration: "$call_duration",
+              groq_input_tokens: "$groq_input_tokens",
+              groq_output_tokens: "$groq_output_tokens",
+              last_activity: "$last_activity",
+              character_count: "$character_count",
+              completion_model: "$completion_model",
+              active: "$active",
+              user_id: "$user_id",
+              conversation: "$conversation",
+              assistant: "$assistant",
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the '_id' field
+          assistant_id: "$_id", // Rename '_id' to 'assistant_id'
+          count: 1, // Keep the count of calls
+          calls: 1, // Keep the calls array
         },
       },
     ]);
-    
+
+    // Process the data similarly to your original pipeline
     const assistance: string[] = [];
     const noOfCalls: number[] = [];
-    
-    console.log(assistantIdGroup)
-
-    assistantIdGroup.forEach((item) => {
-      assistance.push(item._id);
-      noOfCalls.push(item.count);
-    });
-    
-
     const assistantNames = await ConfigurationModel.find({
-      user_id: `${user.id}`, 
+      user_id: `${user.id}`,
     }).exec();
-    
     const assistantNameMap = assistantNames.reduce((acc, item) => {
       acc[item._id] = item.assistent_name;
       return acc;
     }, {});
-    
+
+    assistantIdGroupCombined.forEach((item) => {
+      assistance.push(item.assistant_id);
+      noOfCalls.push(item.count);
+    });
+
+    // Sorting by the number of calls in descending order
     const sortedData = assistance
       .map((assistantId, index) => ({
-        assistanceName: assistantNameMap[assistantId] || "Unknown", 
+        assistanceName: assistantNameMap[assistantId] || "Unknown",
         noOfCalls: noOfCalls[index],
       }))
       .sort((a, b) => b.noOfCalls - a.noOfCalls);
-    
 
     const sortedAssistance = sortedData.map((item) => item.assistanceName);
     const sortedNoOfCalls = sortedData.map((item) => item.noOfCalls);
-    
+
     return NextResponse.json(
       {
         totalCalls,
@@ -142,7 +164,7 @@ export async function GET(request: Request) {
         dates,
         assistance: sortedAssistance,
         noOfCalls: sortedNoOfCalls,
-        // perAssistantCost
+        assistantIdGroupByAssistant: assistantIdGroupCombined, // Return the combined result
       },
       { status: 200 }
     );
