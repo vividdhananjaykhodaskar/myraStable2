@@ -120,7 +120,7 @@ const ApexDonutChart = ({
           offsetY: 0,
         },
       },
-      colors: generateColorGradient("#4ade80", 5),
+      colors: generateColorGradient("#4ade80", assistanceList.length),
       legend: {
         position: "right",
         offsetY: 0,
