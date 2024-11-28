@@ -83,7 +83,7 @@ const ApexDonutChart = ({
         enabled: true,
         y: {
           formatter: (value: number) =>
-            activeTab === "calls" ? value.toFixed(2) : `$ ${value.toFixed(2)}`,
+            activeTab === "calls" ? value : `$ ${value.toFixed(2)}`,
           title: {
             formatter: (seriesName: string) => seriesName,
           },
@@ -124,40 +124,32 @@ const ApexDonutChart = ({
   return (
     <div>
       {/* Tabs for switching */}
-      <div className="w-full">
+      <div className="kr-tabs-wrapper">
         <div className="relative right-0">
-          <ul
-            className="relative flex flex-wrap px-1.5 py-1.5 list-none rounded-md bg-slate-100"
-            data-tabs="tabs"
-            role="list"
-          >
+          <ul className="relative flex flex-wrap px-1.5 py-1.5 list-none rounded-full" role="list">
             <li
-              className={`z-30 flex-auto text-center ${
-                activeTab === "calls" ? "bg-slate-300" : "bg-inherit"
-              }`}
+              className={`z-30 flex-auto text-center rounded-full ${activeTab === "calls" ? "bg-[rgba(148,148,148,0.5)] " : "bg-inherit"}`}
             >
-              <a
+              <button
                 onClick={() => setActiveTab("calls")}
-                className="z-30 flex items-center justify-center w-full px-0 py-2 text-sm mb-0 transition-all ease-in-out border-0 rounded-md cursor-pointer text-slate-600"
+                className="z-30 flex items-center justify-center w-full px-0 py-2 text-sm mb-0 transition-all ease-in-out border-0 rounded-full cursor-pointer text-slate-100"
                 role="tab"
                 aria-selected={activeTab === "calls"}
               >
                 Calls
-              </a>
+              </button>
             </li>
             <li
-              className={`z-30 flex-auto text-center ${
-                activeTab === "cost" ? "bg-slate-300" : "bg-inherit"
-              }`}
+              className={`z-30 flex-auto text-center rounded-full ${activeTab === "cost" ? "bg-[rgba(148,148,148,0.5)]" : "bg-inherit"}`}
             >
-              <a
+              <button
                 onClick={() => setActiveTab("cost")}
-                className="z-30 flex items-center justify-center w-full px-0 py-2 mb-0 text-sm transition-all ease-in-out border-0 rounded-lg cursor-pointer text-slate-600"
+                className="z-30 flex items-center justify-center w-full px-0 py-2 mb-0 text-sm transition-all ease-in-out border-0 rounded-full cursor-pointer text-slate-100"
                 role="tab"
                 aria-selected={activeTab === "cost"}
               >
                 Cost
-              </a>
+              </button>
             </li>
           </ul>
         </div>
