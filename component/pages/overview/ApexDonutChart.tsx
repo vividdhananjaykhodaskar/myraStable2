@@ -1,6 +1,11 @@
 import React, { useState } from "react";
-import ReactApexChart from "react-apexcharts";
 import chroma from "chroma-js";
+
+import dynamic from 'next/dynamic';
+
+const ReactApexChartNoSSR = dynamic(() => import('react-apexcharts'), { 
+  ssr: false 
+});
 
 const ApexDonutChart = ({
   assistanceList,
@@ -155,7 +160,7 @@ const ApexDonutChart = ({
 
       {/* Chart */}
       <div id="chart">
-        <ReactApexChart
+        <ReactApexChartNoSSR
           options={setupOptions.options}
           series={setupOptions.series}
           type="donut"

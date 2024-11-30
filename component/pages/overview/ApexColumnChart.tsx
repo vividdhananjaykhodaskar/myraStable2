@@ -1,5 +1,9 @@
 import React from "react";
-import ReactApexChart from "react-apexcharts";
+import dynamic from 'next/dynamic';
+
+const ReactApexChartNoSSR = dynamic(() => import('react-apexcharts'), { 
+  ssr: false 
+});
 
 const ApexColumnChart = ({
   costArray,
@@ -158,7 +162,7 @@ const ApexColumnChart = ({
       <h4>Daily Call Cost Breakdown</h4>
     </div>
       <div id="chart">
-        <ReactApexChart
+        <ReactApexChartNoSSR
           options={chartOption.options}
           series={chartOption.series}
           type="bar"
