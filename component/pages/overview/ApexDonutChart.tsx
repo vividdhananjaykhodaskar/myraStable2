@@ -40,7 +40,7 @@ const ApexDonutChart = ({
   const chartTitle =
     activeTab === "calls" ? "Calls Distribution" : "Cost Distribution";
 
-  const setupOptions = {
+  const setupOptions: any = {
     series: chartData,
     options: {
       labels: assistanceList,
@@ -126,7 +126,10 @@ const ApexDonutChart = ({
       {/* Tabs for switching */}
       <div className="kr-tabs-wrapper">
         <div className="relative right-0">
-          <ul className="relative flex flex-wrap px-1.5 py-1.5 list-none rounded-full" role="list">
+          <ul
+            className="relative flex flex-wrap px-1.5 py-1.5 list-none rounded-full"
+            role="list"
+          >
             <li
               className={`z-30 flex-auto text-center rounded-full ${activeTab === "calls" ? "bg-[rgba(148,148,148,0.5)] " : "bg-inherit"}`}
             >

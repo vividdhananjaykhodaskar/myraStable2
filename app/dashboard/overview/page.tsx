@@ -1,6 +1,7 @@
 "use client";
 import ApexColumnChart from "@/component/pages/overview/ApexColumnChart";
 import ApexDonutChart from "@/component/pages/overview/ApexDonutChart";
+import { DatePickerWithRange } from "@/component/pages/overview/DatePickerWithRange";
 import { getCallOverview } from "@/service/prservice";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
@@ -103,6 +104,7 @@ const Overview = () => {
 
   return (
     <div className="p-4 flex-grow w-3/4">
+        <DatePickerWithRange />
       <div className="flex w-fit flex-row gap-1 bg-[rgba(148,148,148,0.5)] p-2 rounded-md">
         <Image src="/calender.svg" alt="" width={20} height={20} />
         <p className="text-sm text-gray-200 justify-center">Billing Period</p>

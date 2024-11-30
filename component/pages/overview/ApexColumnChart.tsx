@@ -8,7 +8,7 @@ const ApexColumnChart = ({
   costArray: number[];
   datesArray: string[];
 }) => {
-  const chartOption = {
+  const chartOption: any = {
     series: [
       {
         name: "Cost",
@@ -22,8 +22,8 @@ const ApexColumnChart = ({
         toolbar: {
           show: true,
           tools: {
-            download: false
-          }
+            download: false,
+          },
         },
       },
       plotOptions: {
@@ -57,41 +57,39 @@ const ApexColumnChart = ({
         fillSeriesColor: false,
         theme: false,
         style: {
-          fontSize: '12px',
-          fontFamily: undefined
+          fontSize: "12px",
+          fontFamily: undefined,
         },
         onDatasetHover: {
-            highlightDataSeries: false,
+          highlightDataSeries: false,
         },
         x: {
-            show: true,
-            format: 'dd MMM',
-            formatter: undefined,
+          show: true,
+          format: "dd MMM",
+          formatter: undefined,
         },
         y: {
-            formatter: undefined,
-            title: {
-                formatter: (seriesName:string) => seriesName,
-            },
-            
+          formatter: undefined,
+          title: {
+            formatter: (seriesName: string) => seriesName,
+          },
         },
         z: {
-            formatter: undefined,
-            title: 'Size: '
+          formatter: undefined,
+          title: "Size: ",
         },
         marker: {
-            show: true,
+          show: true,
         },
         items: {
-           display: 'flex',
+          display: "flex",
         },
         fixed: {
-            enabled: false,
-            position: 'topRight',
-            offsetX: 0,
-            offsetY: 0,
+          enabled: false,
+          position: "topRight",
+          offsetX: 0,
+          offsetY: 0,
         },
-
       },
       colors: ["#4ade80"],
       xaxis: {
@@ -104,10 +102,10 @@ const ApexColumnChart = ({
           show: false,
         },
         labels: {
-          style:{
+          style: {
             colors: "#a3a3a3",
           },
-          formatter: function (value:any) {
+          formatter: function (value: any) {
             const date = new Date(value);
             return date.toLocaleDateString("en-US", {
               month: "short",
@@ -128,7 +126,6 @@ const ApexColumnChart = ({
             },
           },
         },
-        
       },
       yaxis: {
         axisBorder: {
@@ -139,7 +136,7 @@ const ApexColumnChart = ({
         },
         labels: {
           show: true,
-          style:{
+          style: {
             colors: "#a3a3a3",
           },
           formatter: function (val: any) {
@@ -154,16 +151,16 @@ const ApexColumnChart = ({
         align: "left", // Align the title to the left
         style: {
           color: "#FFFFFF",
-          fontSize: '16px', // Optional: adjust font size if needed
-          fontWeight: 'bold', // Optional: adjust font weight if needed
+          fontSize: "16px", // Optional: adjust font size if needed
+          fontWeight: "bold", // Optional: adjust font weight if needed
         },
       },
-      
+
       grid: {
-        show: true, 
-        borderColor: '#535962', 
-        position: 'back', 
-      }
+        show: true,
+        borderColor: "#535962",
+        position: "back",
+      },
     },
   };
 
