@@ -12,6 +12,7 @@ export interface ICallCollection {
   assistent_id: string;
   user_id: string;
   conversation: Types.ObjectId;
+  assistant: Types.ObjectId;
 }
 export const CallCollectionSchema = new Schema<ICallCollection>(
   {
@@ -26,6 +27,7 @@ export const CallCollectionSchema = new Schema<ICallCollection>(
     assistent_id: String,
     user_id: String,
     conversation: { type: Schema.Types.ObjectId, ref: "CallConversation" },
+    assistant: { type: Schema.Types.ObjectId, ref: "modelconfig", required: true },
   },
   {
     timestamps: true,
