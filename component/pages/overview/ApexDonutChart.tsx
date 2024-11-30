@@ -102,17 +102,6 @@ const ApexDonutChart = ({
           offsetX: -8,
         },
       },
-      title: {
-        text: chartTitle,
-        floating: false,
-        offsetY: 0,
-        align: "left",
-        style: {
-          color: "#FFFFFF",
-          fontSize: "16px",
-          fontWeight: "bold",
-        },
-      },
       grid: {
         show: true,
         borderColor: "#535962",
@@ -124,7 +113,11 @@ const ApexDonutChart = ({
   return (
     <div>
       {/* Tabs for switching */}
-      <div className="kr-tabs-wrapper">
+      <div className="flex flex-row items-center mb-5">
+        <div className="w-2/4	">
+          <h4>{chartTitle}</h4>
+        </div>
+        <div className="kr-tabs-wrapper !m-0 w-2/4	">
         <div className="relative right-0">
           <ul
             className="relative flex flex-wrap px-1.5 py-1.5 list-none rounded-full"
@@ -157,6 +150,8 @@ const ApexDonutChart = ({
           </ul>
         </div>
       </div>
+      </div>
+      
 
       {/* Chart */}
       <div id="chart">

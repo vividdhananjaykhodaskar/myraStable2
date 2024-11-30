@@ -3,20 +3,21 @@ import ApexColumnChart from "@/component/pages/overview/ApexColumnChart";
 import ApexDonutChart from "@/component/pages/overview/ApexDonutChart";
 import { DatePickerWithRange } from "@/component/pages/overview/DatePickerWithRange";
 import { getCallOverview } from "@/service/prservice";
-import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { endOfMonth, startOfMonth } from "date-fns";
+import React, { useEffect, useMemo, useState } from "react";
+import { DateRange } from "react-day-picker";
 
 const Overview = () => {
-  const today = new Date();
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  // State for bar chart data
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: startOfMonth(new Date()),
+    to: endOfMonth(new Date()),
+  });
   const [barChartData, setBarChartData] = useState({
     datesArray: [] as string[],
     costArray: [] as number[],
   });
 
-  // State for donut chart data
+
   const [donutChartData, setDonutChartData] = useState({
     assistanceList: [] as string[],
     noOfCallsArray: [] as number[],
@@ -29,39 +30,6 @@ const Overview = () => {
     totalMinutes: 0,
     avgCostPerMin: 0,
   });
-
-  const getBillingPeriod = (date: Date) => {
-    const start = new Date(date.getFullYear(), date.getMonth(), 1);
-    const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    return {
-      start: start.toLocaleDateString(),
-      end: end.toLocaleDateString(),
-    };
-  };
-
-  const goToPreviousMonth = () => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(currentDate.getMonth() - 1);
-    setCurrentDate(newDate);
-  };
-
-  const goToNextMonth = () => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(currentDate.getMonth() + 1);
-    setCurrentDate(newDate);
-  };
-
-  const isNextDisabled = useMemo(() => {
-    return (
-      currentDate.getFullYear() === today.getFullYear() &&
-      currentDate.getMonth() === today.getMonth()
-    );
-  }, [currentDate, today]);
-
-  const { start, end } = useMemo(
-    () => getBillingPeriod(currentDate),
-    [currentDate]
-  );
 
   const fetchCallLogs = async (start_date: string, end_date: string) => {
     try {
@@ -99,32 +67,19 @@ const Overview = () => {
   };
 
   useEffect(() => {
-    fetchCallLogs(start, end);
-  }, [start, end]);
+    if (date && date.from && date.to) {
+      const startDate = new Date(date.from);
+      const endDate = new Date(date.to);
+      fetchCallLogs(
+        `${startDate.getMonth() + 1}/${startDate.getDate()}/${startDate.getFullYear()}`,
+        `${endDate.getMonth() + 1}/${endDate.getDate()}/${endDate.getFullYear()}`
+      );
+    }
+  }, [date]);
 
   return (
     <div className="p-4 flex-grow w-3/4">
-        <DatePickerWithRange />
-      <div className="flex w-fit flex-row gap-1 bg-[rgba(148,148,148,0.5)] p-2 rounded-md">
-        <Image src="/calender.svg" alt="" width={20} height={20} />
-        <p className="text-sm text-gray-200 justify-center">Billing Period</p>
-        <a href="" className="font-bold">
-          <p className="text-sm">{`${start} - ${end}`}</p>
-        </a>
-        <button onClick={goToPreviousMonth}>
-          <Image src="/chevron-left.svg" alt="" width={20} height={20} />
-        </button>
-        <button onClick={goToNextMonth} disabled={isNextDisabled}>
-          <Image
-            src="/chevron-right.svg"
-            alt=""
-            width={20}
-            height={20}
-            style={{ opacity: isNextDisabled ? 0.5 : 1 }}
-          />
-        </button>
-      </div>
-
+      <DatePickerWithRange date={date} setDate={setDate} />
       <div className="w-full gap-2 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 pt-3 mb-6">
         <div className="grow p-4 justify-center border border-[#3d3d3d] bg-[rgba(80,80,80,0.25)] rounded-lg">
           <p className="text-md text-slate-400">No. of Calls</p>

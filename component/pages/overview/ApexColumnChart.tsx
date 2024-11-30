@@ -144,18 +144,6 @@ const ApexColumnChart = ({
           },
         },
       },
-      title: {
-        text: "Daily Call Cost Breakdown",
-        floating: false, // Set to false to prevent floating and make it more aligned with the chart area
-        offsetY: 0, // Set to 0 to position the title at the top
-        align: "left", // Align the title to the left
-        style: {
-          color: "#FFFFFF",
-          fontSize: "16px", // Optional: adjust font size if needed
-          fontWeight: "bold", // Optional: adjust font weight if needed
-        },
-      },
-
       grid: {
         show: true,
         borderColor: "#535962",
@@ -165,7 +153,10 @@ const ApexColumnChart = ({
   };
 
   return (
-    <div>
+    <div className="">
+    <div className="w-2/4	">
+      <h4>Daily Call Cost Breakdown</h4>
+    </div>
       <div id="chart">
         <ReactApexChart
           options={chartOption.options}

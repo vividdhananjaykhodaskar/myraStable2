@@ -1,9 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { addDays, endOfMonth, format, startOfMonth } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { DateRange } from "react-day-picker";
+import { addMonths, endOfMonth, format, isSameMonth, startOfMonth } from "date-fns";
+import {
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -14,16 +17,31 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function DatePickerWithRange({
-  className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: startOfMonth(new Date()),
-    to: endOfMonth(new Date()),
-  });
+export function DatePickerWithRange({ date, setDate }: any) {
+  const handleNextMonth = () => {
+    if (date?.from) {
+      const nextMonth = addMonths(date.from, 1);
+      setDate({
+        from: startOfMonth(nextMonth),
+        to: endOfMonth(nextMonth),
+      });
+    }
+  };
+
+  const handlePreviousMonth = () => {
+    if (date?.from) {
+      const previousMonth = addMonths(date.from, -1);
+      setDate({
+        from: startOfMonth(previousMonth),
+        to: endOfMonth(previousMonth),
+      });
+    }
+  };
+
+  const isNextMonthDisabled = isSameMonth(date?.from, new Date());
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("grid gap-4 grid-cols-2 max-w-md	relative")}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -60,6 +78,14 @@ export function DatePickerWithRange({
           />
         </PopoverContent>
       </Popover>
+      <div className="flex gap-1">
+        <Button variant="outline" onClick={handlePreviousMonth} className="px-2 border-none bg-transparent">
+          <ChevronLeft /> 
+        </Button>
+        <Button variant="outline" onClick={handleNextMonth} disabled={isNextMonthDisabled} className="px-2 border-none bg-transparent">
+          <ChevronRight />
+        </Button>
+      </div>
     </div>
   );
 }
