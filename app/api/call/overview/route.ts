@@ -1,5 +1,5 @@
 import { validateRequest } from "@/lib/auth";
-import { calculateTotalMinutes } from "@/lib/utils";
+import { calculateTotalMinutes } from "@/lib/calculation";
 import connectMongo from "@/mongodb/connectmongoDb";
 import {
   CallCollectionModel,

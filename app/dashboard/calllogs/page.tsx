@@ -1,5 +1,5 @@
 "use client";
-import { getDuration } from "@/lib/utils";
+import { getDuration } from "@/lib/calculation";
 import { useAppSelector } from "@/redux";
 import { getCallLogs } from "@/service/prservice";
 import {
