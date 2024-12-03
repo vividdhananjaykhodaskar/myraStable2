@@ -3,7 +3,6 @@ import connectMongo from "../../mongodb/connectmongoDb";
 export async function startCall({ welcomeMessage, ...restOfData }:{welcomeMessage:string}) {
   try {
     // await connectMongo();
-    console.log({ welcomeMessage, ...restOfData },"got in main function")
     // Create the call conversation
     const conversationData = {
       messages: [

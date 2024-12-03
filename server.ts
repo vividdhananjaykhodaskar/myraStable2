@@ -1,27 +1,29 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
-// import { createCall } from "./app/actions/call";
 import { updateCallConfig } from "./lib/service/callService";
 import { createCall } from "./app/actions/call";
 import { User } from "./mongodb/models/mainModel";
-// import { startCall } from "@/lib/service/callService";
+
 const dev = process.env.NODE_ENV !== "production";
-const hostname = "localhost";
-const port = 3000;
+const hostname = process.env.HOSTNAME || "0.0.0.0"; // Use 0.0.0.0 for production to allow external connections
+const port = parseInt(process.env.PORT || "3000", 10);
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
+
 app.prepare().then(() => {
   const httpServer = createServer(handler);
   const io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: process.env.CLIENT_URL || "http://localhost:3000", // Set this to the deployed client URL
       methods: ["GET", "POST"],
     },
   });
+
   io.on("connection", (socket) => {
     let callId: string = "";
     socket.emit("message", "Hello, client!");
+
     socket.on("createCall", async (data) => {
       try {
         const result = await createCall(data);
@@ -31,8 +33,9 @@ app.prepare().then(() => {
         console.error("Error updating database:", error);
       }
     });
-    socket.on("disconnect", async() => {
-        if (callId) {
+
+    socket.on("disconnect", async () => {
+      if (callId) {
         const currentTime = new Date();
         const callCollection = await updateCallConfig(
           callId,
@@ -48,26 +51,17 @@ app.prepare().then(() => {
         const callEndTime = callCollection.call_end_time;
 
         function calculateCredits(startTime: string, endTime: string): number {
-          // Parse the timestamps into Date objects
           const start = new Date(startTime);
           const end = new Date(endTime);
-
-          // Calculate the difference in milliseconds
           const differenceInMs = end.getTime() - start.getTime();
-
-          // Convert milliseconds to minutes
           const callDurationInMinutes = differenceInMs / (1000 * 60);
-
-          // Calculate credits
           return callDurationInMinutes * 5;
         }
 
         const creditsToDeduct = calculateCredits(callStartTime, callEndTime);
         user.credits -= creditsToDeduct;
         await user.save();
-        
       }
-
     });
   });
   httpServer
