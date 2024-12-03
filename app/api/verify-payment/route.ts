@@ -1,3 +1,4 @@
+import { PaymentOrderModel } from "@/mongodb/models/mainModel";
 import { NextRequest, NextResponse } from "next/server";
 import  Razorpay from "razorpay";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
@@ -31,20 +32,24 @@ export async function POST(request: NextRequest) {
     // Validate the payment signature
     const isValidSignature = validateWebhookSignature(body, razorpay_signature, secret);
     if (isValidSignature) {
-      // Find the order in the in-memory array
-      const order = orders.find(o => o.order_id === razorpay_order_id);
-      if (order) {
-        order.status = 'paid';
-        order.payment_id = razorpay_payment_id;
-      }
+      // Find the order in the database
+      const order = await PaymentOrderModel.findOne({ order_id: razorpay_order_id });
 
-      // Return success response
-      return NextResponse.json({ status: 'ok' }, { status: 200 });
+      if (order) {
+        // Update the order status to 'paid'
+        order.status = "processed";
+        await order.save(); // Save the updated order to the database
+
+        // Return success response
+        return NextResponse.json({ status: "ok", message: "Payment verified and order updated" }, { status: 200 });
+      } else {
+        return NextResponse.json({ status: "not_found", message: "Order not found" }, { status: 404 });
+      }
     } else {
-      return NextResponse.json({ status: 'verification_failed' }, { status: 400 });
+      return NextResponse.json({ status: "verification_failed", message: "Signature mismatch" }, { status: 400 });
     }
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ status: 'error', message: 'Error verifying payment' }, { status: 500 });
+    console.error("Error verifying payment:", error);
+    return NextResponse.json({ status: "error", message: "Error verifying payment" }, { status: 500 });
   }
 }

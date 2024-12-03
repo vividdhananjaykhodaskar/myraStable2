@@ -43,7 +43,7 @@ const App = () => {
         name: 'VOMYRA',
         description: 'Test Transaction',
         order_id: order.id, // This is the order_id created in the backend
-        callback_url: 'http://localhost:3000/payment-success', // Your success URL
+        // callback_url: 'http://localhost:3000/payment-success', // Your success URL
         prefill: {
           name: 'Your Name',
           email: 'your.email@example.com',
