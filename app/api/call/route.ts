@@ -2,6 +2,7 @@ import { validateRequest } from "@/lib/auth";
 import connectMongo from "@/mongodb/connectmongoDb";
 import { CallCollectionModel, CallConversationModel } from "@/mongodb/models/mainModel";
 import { NextResponse } from "next/server";
+import { startCall, updateCallConfig } from '../../../lib/service/callService'
 
 export const revalidate = 0;
 
@@ -29,65 +30,31 @@ export async function GET(request: Request) {
   return Response.json({ callData, totalCount }, { status: 200 });
 }
 
-export async function POST(request: Request) {
-  const req: any = await request.json();
-  const { welcomeMessage, ...restOfData } = req;
+export async function POST(request:Request) {
+  const req = await request.json();
 
   try {
-    await connectMongo();
-
-    let callConversation = null;
-    const conversationData = {
-      messages: [
-        {
-          role: "system",
-          content: welcomeMessage,
-          timestamp: new Date(),
-        },
-      ],
-      lastUpdated: new Date(),
-    };
-
-    callConversation = await CallConversationModel.create(conversationData);
-
-
-
-    const callData = await CallCollectionModel.create({
-      ...restOfData,
-      call_end_time: null,
-      call_duration: null,
-      groq_input_tokens: 0,
-      groq_output_tokens: 0,
-      last_activity: new Date(),
-      active: true,
-      conversation: callConversation ? callConversation._id : null,
-    });
-
-    return Response.json({ message: "Call started", success: true, data: callData }, { status: 200 });
+    const response = await startCall(req);
+    return Response.json(response, { status: 200 });
   } catch (error) {
-    return Response.json(error, { status: 400 });
+    return Response.json({ message: error, success: false }, { status: 400 });
   }
 }
+
 
 export async function PUT(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
   const req: any = await request.json();
 
+  if (!id) {
+    return Response.json({ message: "ID is required", success: false }, { status: 400 });
+  }
+
   try {
-    await connectMongo();
-    const my_data = await CallCollectionModel.findById(id);
-
-    for (const key in req) {
-      if (req[key]) {
-        my_data[key] = req[key];
-      }
-    }
-
-    my_data.save();
-
-    return Response.json({ message: "Configuration updated successfully" }, { status: 200 });
-  } catch (error) {
-    return Response.json(error, { status: 400 });
+    const response = await updateCallConfig(id, req);
+    return Response.json(response, { status: 200 });
+  } catch (error: any) {
+    return Response.json({ message: error.message, success: false }, { status: 400 });
   }
 }

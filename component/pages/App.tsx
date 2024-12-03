@@ -10,6 +10,7 @@ import moment from "moment";
 import { useAppSelector } from "@/redux";
 import { useParams, useSearchParams } from "next/navigation";
 import { toast, Bounce } from "react-toastify";
+import {socket}  from '../../app/socket'
 
 type DeviceType = "desktop" | "iOS" | "Android";
 
@@ -118,6 +119,12 @@ const App = ({
       getTranscribeResponse(caption);
     }
   }, [caption]);
+
+  useEffect(()=>{
+    socket.on('callStarted',(callDataId:string)=>{
+      setCurrentCall(callDataId);
+    })
+  },[])
 
   function getDeviceType(): DeviceType {
     const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
@@ -351,19 +358,21 @@ const App = ({
         setTimeout(() => {
           handleCallState(true, "active");
         }, 1000);
-        const callData = await createCall({
+        const callDataPayload = {
           completion_model: currentAssistant?.groq_model,
           assistant:assistant_id,
           user_id: currentAssistant?.user_id,
           character_count: currentAssistant?.welcome_message.length ?? 0,
           welcomeMessage: currentAssistant?.welcome_message ?? "",
-        });
-        if (callData) {
-          setCurrentCall(callData);
-          callIntervalRef.current = setInterval(() => {
-            updateCall(callData, { last_activity: new Date() });
-          }, 10000);
         }
+        // const callData = await createCall(callDataPayload);
+        socket.emit('createCall',callDataPayload)
+        // if (callData) {
+        //   setCurrentCall(callData);
+        //   callIntervalRef.current = setInterval(() => {
+        //     updateCall(callData, { last_activity: new Date() });
+        //   }, 10000);
+        // }
       });
     }
   };
