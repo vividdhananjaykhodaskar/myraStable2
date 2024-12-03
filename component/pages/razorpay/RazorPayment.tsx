@@ -1,10 +1,22 @@
-"use client"
-import React, { useState } from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import  Helmet  from 'react-helmet';
 
 const App = () => {
   const [amount, setAmount] = useState('');
+
+  useEffect(() => {
+    // Load Razorpay script dynamically when the component mounts
+    const loadRazorpayScript = () => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => console.log('Razorpay script loaded successfully');
+      script.onerror = () => alert('Failed to load Razorpay script');
+      document.body.appendChild(script);
+    };
+
+    loadRazorpayScript();
+  }, []);
 
   const payNow = async () => {
     try {
@@ -24,7 +36,7 @@ const App = () => {
 
       const order = response.data;
       // Open Razorpay Checkout
-      const options: any = {
+      const options = {
         key: 'rzp_test_xkNx1lpB3upUcJ', // Replace with your Razorpay key_id
         amount: order.amount,
         currency: order.currency,
@@ -38,9 +50,9 @@ const App = () => {
           contact: '9999999999'
         },
         theme: {
-          color: '#1C3537'
+          color: '#1C3537',
         },
-        handler: function (response: any) {
+        handler: function (response) {
           console.log('Payment response received:', response);
           axios.post('http://localhost:3000/api/verify-payment', {
             razorpay_order_id: response.razorpay_order_id,
@@ -64,7 +76,7 @@ const App = () => {
 
       console.log(options);
       console.log('Opening Razorpay Checkout...');
-      const rzp: any = new (window as any).Razorpay(options); // Access Razorpay from window object
+      const rzp = new window.Razorpay(options); // Access Razorpay from window object
       rzp.open();
       console.log(rzp);
 
@@ -76,9 +88,6 @@ const App = () => {
 
   return (
     <div>
-      <Helmet>
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-      </Helmet>
       <h1>Razorpay Payment Gateway Integration</h1>
       <form id="payment-form">
         <label htmlFor="amount">Amount:</label>
