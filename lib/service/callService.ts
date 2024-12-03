@@ -32,7 +32,7 @@ export async function startCall({ welcomeMessage, ...restOfData }:{welcomeMessag
     throw new Error(error?.message || "Failed to start the call");
   }
 }
-export async function updateCallConfig(id: string, updateData: any) {
+export async function updateCallConfig(id: string, updateData: any,getCallCollection:boolean = false) {
   try {
     // await connectMongo();
     // Fetch the call data by ID
@@ -48,7 +48,15 @@ export async function updateCallConfig(id: string, updateData: any) {
     }
     // Save the updated data
     await my_data.save();
-    return { message: "Configuration updated successfully", success: true };
+
+    if (getCallCollection) return  my_data;
+
+    const response = {
+      message: "Configuration updated successfully",
+      success: true,
+    };
+
+    return response;
   } catch (error: any) {
     throw new Error(error?.message || "Failed to update configuration");
   }
