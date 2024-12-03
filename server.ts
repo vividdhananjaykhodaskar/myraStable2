@@ -24,7 +24,6 @@ app.prepare().then(() => {
     socket.emit("message", "Hello, client!");
     socket.on("createCall", async (data) => {
       try {
-        console.log("got Data>>>", data);
         const result = await createCall(data);
         socket.emit("callStarted", result);
         callId = result;
@@ -33,7 +32,6 @@ app.prepare().then(() => {
       }
     });
     socket.on("disconnect", async() => {
-      console.log("Client disconnected", callId);
         if (callId) {
         const currentTime = new Date();
         const callCollection = await updateCallConfig(

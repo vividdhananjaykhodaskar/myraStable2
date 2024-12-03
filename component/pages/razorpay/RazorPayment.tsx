@@ -25,15 +25,14 @@ const App = () => {
       // Ensure amount is in paise (1 INR = 100 paise)
       const amountInPaise = amount * 100;
 
-      const response = await createPaymentOrder(
+      const response:any = await createPaymentOrder(
         amountInPaise,
         "INR",
         "receipt#1"
       );
 
       // Handle response
-      if (response.success) {
-        console.log("Order created successfully:", response.data);
+      if (response.success && response.data) {
         const order = response.data;
 
         const options = {
@@ -96,7 +95,7 @@ const App = () => {
           id="amount"
           name="amount"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => setAmount(Number(e.target.value))}
           required
         />
         <button type="button" onClick={payNow}>

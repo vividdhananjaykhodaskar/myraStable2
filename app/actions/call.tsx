@@ -6,6 +6,6 @@ export async function createCall(callData:any):Promise<any>{
         const result = await startCall(callData);
         return result?.data._id ?? '-1';
       } catch (error) {
-        console.log('error>>>>>>>>>>>>>>>>>>',error)
+        console.log('error',error)
       }
 }
