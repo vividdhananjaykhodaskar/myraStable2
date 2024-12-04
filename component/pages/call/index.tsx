@@ -5,6 +5,7 @@ import ChatList from "@/component/pages/ChatList";
 import { useAppDispatch, useAppSelector } from "@/redux";
 import { getAllUserAssistant, getAssistantDetailsById, getShareAssistant, updateMenu } from "@/service/assistantservice";
 import { useParams, useRouter } from "next/navigation";
+import { LoaderCircle } from "lucide-react";
 // import { handleAssistants, handleCurrentAssistant } from "@/redux/indSourceSlice";
 
 const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => {
@@ -18,6 +19,7 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
   const [callstatus, setCallStatus] = useState<any>("Listening");
   const [selectedAssistant,setSelectedAssistant] = useState(null);
   const [insufficientCredit, setInsufficientCredit] = useState(false);
+  const [loading, setLoading] = useState(true); // State to track loading status
 
 
   useEffect(() => {
@@ -29,6 +31,7 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
       }
 
       if (share && share_key) {
+        setLoading(true); // Start loading
         const share_assistant: any = await getShareAssistant(assistant_id, share_key);
         if (share_assistant.success) {
           new_updated_menu(share_assistant.data);
@@ -37,8 +40,9 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
         } else {
           router.push("/");
         }
-
+        setLoading(false); // Stop loading
       } else {
+        setLoading(true); // Start loading
         const currSelectedAssitantDetails: any = await getAssistantDetailsById(assistant_id);
         if (currSelectedAssitantDetails.success) {
           setSelectedAssistant(currSelectedAssitantDetails.data);
@@ -48,7 +52,7 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
         } else {
           router.push("/");
         }
- 
+        setLoading(false); // Stop loading
         // else {
         //   router.push("/");
         // }
@@ -120,26 +124,33 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
 
   return (
 <main className="mx-auto px-1 md:px-6 lg:px-8 h-screen -mb-[4rem] flex flex-col justify-center items-center">
-  <div className="w-full overflow-hidden">
-    {insufficientCredit ? (
-      <div className="insufficient-credit-message flex justify-center items-center text-red-600 h-full">
-        <p>Insufficient credit to continue using this service.</p>
-      </div>
-    ) : (
-      <>
-        {selectedAssistant && (
-          <App
-            setMessages={handlNewMessage}
-            setLoadingRes={setLoadingRes}
-            messages={messages}
-            handleCallState={handleCallState}
-            currentAssistant={selectedAssistant}
-          />
+      <div className="w-full overflow-hidden">
+        {insufficientCredit ? (
+          <div className="insufficient-credit-message flex justify-center items-center text-red-600 h-full">
+            <p>Insufficient credit to continue using this service.</p>
+          </div>
+        ) : (
+          <>
+            {loading ? (
+              // Show Skeleton Loader if data is being fetched
+              <div className="flex justify-center items-center h-screen">
+                <LoaderCircle className="w-8 h-8 animate-spin"/>
+              </div>
+            ) : (
+              selectedAssistant && (
+                <App
+                  setMessages={handlNewMessage}
+                  setLoadingRes={setLoadingRes}
+                  messages={messages}
+                  handleCallState={handleCallState}
+                  currentAssistant={selectedAssistant}
+                />
+              )
+            )}
+            {messages.length > 1 && <ChatList messages={messages} loadingRes={loadingRes} />}
+          </>
         )}
-        {messages.length > 1 && <ChatList messages={messages} loadingRes={loadingRes} />}
-      </>
-    )}
-  </div>
+      </div>
       {callActive && (
         <div className="box-loader">
           <div className="wrapper">
