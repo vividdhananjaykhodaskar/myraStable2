@@ -12,13 +12,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function AddCreditModal() {
-  const [creditAmount, setCreditAmount] = useState("");
+export function AddCreditModal({ amount, setAmount, handlePay }) {
   const [error, setError] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
-  const validateAndSubmit = () => {
-    const amount = Number(creditAmount);
-    if (!creditAmount) {
+  const validateAndSubmit = (value) => {
+    const amount = Number(value);
+    if (!amount) {
       setError("Credit amount is required.");
       return;
     }
@@ -28,12 +28,12 @@ export function AddCreditModal() {
     }
     setError("");
     console.log("Credits added:", amount);
+    handlePay();
+    setIsOpen(false)
   };
 
-  
-
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">Add Credits</Button>
       </DialogTrigger>
@@ -54,8 +54,8 @@ export function AddCreditModal() {
               id="creditAmount"
               type="number"
               placeholder="Enter amount"
-              value={creditAmount}
-              onChange={(e) => setCreditAmount(e.target.value)}
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
               className="w-full"
             />
             {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -65,7 +65,7 @@ export function AddCreditModal() {
           <Button
             type="button"
             className="w-full"
-            onClick={validateAndSubmit}
+            onClick={() => validateAndSubmit(amount)}
           >
             Add Credits
           </Button>

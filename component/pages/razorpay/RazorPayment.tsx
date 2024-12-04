@@ -88,22 +88,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Razorpay Payment Gateway Integration</h1>
-      <form id="payment-form">
-        <label htmlFor="amount">Amount:</label>
-        <input
-          type="number"
-          id="amount"
-          name="amount"
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
-          required
-        />
-        <button type="button" onClick={payNow}>
-          Pay Now
-        </button>
-      </form>
-      <AddCreditModal />
+      <AddCreditModal amount={amount} setAmount={setAmount} handlePay={payNow}/>
     </div>
   );
 };
