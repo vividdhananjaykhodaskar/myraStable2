@@ -54,7 +54,7 @@ const App = () => {
           handler: function (response:any) {
             console.log("Payment response received:", response);
             axios
-              .post("http://localhost:3000/api/verify-payment", {
+              .post("http://localhost:3000/api/addCredit/verifyPayment", {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,

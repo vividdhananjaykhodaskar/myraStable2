@@ -1,5 +1,5 @@
 export const createPaymentOrder = (amountInPaise:number, currency:string, receipt:string) => {
-    return fetch('http://localhost:3000/api/create-order', {
+    return fetch('http://localhost:3000/api/addCredit/createOrder', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
