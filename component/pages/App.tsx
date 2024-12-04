@@ -19,11 +19,13 @@ const App = ({
   setLoadingRes,
   messages,
   handleCallState,
+  currentAssistant
 }: {
   setMessages: (message: string, type: string) => void;
   setLoadingRes: (value: boolean) => void;
   handleCallState: (value: string | boolean, type: string) => void;
   messages: any;
+  currentAssistant:any
 }) => {
   const { assistant_id } = useParams();
   const param = useSearchParams();
@@ -44,12 +46,11 @@ const App = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { connection, connectToDeepgram, connectionState, disconnectFromDeepgram } = useDeepgram();
   const [setaudioListen, microphone, microphoneState]: any = useAudioRecord();
-  const { currentAssistant } = useAppSelector((state) => state.insdata);
+  // const { currentAssistant } = useAppSelector((state) => state.insdata);
 
   const [retData, setRetData] = useState<any>({});
   const [listening, setListening] = useState(false);
   const [currentCall, setCurrentCall] = useState<any>(null);
-  const [characterCount,setCharacterCount] = useState<number>(0);
   
   const deviceType = getDeviceType();
 

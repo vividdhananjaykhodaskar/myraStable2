@@ -75,6 +75,24 @@ export const getShareAssistant = (assistant_id: any, share_key: string) => {
     .catch(() => ({ success: false, message: "somthing went worng" }));
 };
 
+export const getAssistantDetailsById = (assistant_id: any) => {
+  return fetch(`/api/assistant/${assistant_id}/userCall`, {
+    method: "get",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(async (res) => {
+      const result = await res.json();
+      if (res.ok) {
+        return { success: true, message: result.message, data: result.data };
+      }
+
+      return { success: false, message: result.message };
+    })
+    .catch(() => ({ success: false, message: "somthing went worng" }));
+};
+
 export const deleteAssistant = (id: string) => {
   return fetch("/api/assistant/" + id, {
     method: "delete",

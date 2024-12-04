@@ -38,6 +38,7 @@ const AssitantList = () => {
     if (assistants.length === 0) {
       getAllUserAssistant().then((res: any) => {
         if (res.success) {
+          if(res.data.length === 0)return ;
           dispatch(handleAssistants(res.data));
           if (res.data.length > 0 && !assistant_id) {
             dispatch(handleCurrentAssistant(res.data[0]));

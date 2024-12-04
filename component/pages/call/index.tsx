@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import App from "@/component/pages/App";
 import ChatList from "@/component/pages/ChatList";
 import { useAppDispatch, useAppSelector } from "@/redux";
-import { getAllUserAssistant, getShareAssistant, updateMenu } from "@/service/assistantservice";
+import { getAllUserAssistant, getAssistantDetailsById, getShareAssistant, updateMenu } from "@/service/assistantservice";
 import { useParams, useRouter } from "next/navigation";
 import { handleAssistants, handleCurrentAssistant } from "@/redux/indSourceSlice";
 
@@ -16,7 +16,7 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
   const [loadingRes, setLoadingRes] = useState(false);
   const [callActive, setCallActive] = useState<any>(false);
   const [callstatus, setCallStatus] = useState<any>("Listening");
-
+  const [selectedAssistant,setSelectedAssistant] = useState(null);
   useEffect(() => {
     requestWakeLock();
 
@@ -33,23 +33,30 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
           router.push("/");
         }
       } else {
-        let current_config: any = currentAssistant || null;
-        if (assistants.length === 0) {
-          getAllUserAssistant().then((res: any) => {
-            if (res.success) {
-              dispatch(handleAssistants(res.data));
-              if (currentAssistant) {
-                current_config = assistants.find((item: any) => item._id == assistant_id);
-              }
-              new_updated_menu(currentAssistant);
-            } else {
-              router.push("/");
-            }
-          });
-        } else if (assistants.length > 0 && !currentAssistant) {
-          current_config = assistants.find((item: any) => item._id == assistant_id);
-          new_updated_menu(current_config);
+        const currSelectedAssitantDetails:any =await getAssistantDetailsById(assistant_id);
+        if(currSelectedAssitantDetails.success && currSelectedAssitantDetails?.data){
+          setSelectedAssistant(currSelectedAssitantDetails.data);
+          new_updated_menu(currSelectedAssitantDetails.data);
         }
+
+        // let current_config: any = currentAssistant || null;
+        // if (assistants.length === 0) {
+        //   getAllUserAssistant().then((res: any) => {
+        //     console.log(res.data,'<<<<assistance')
+        //     if (res.success) {
+        //       dispatch(handleAssistants(res.data));
+        //       if (currentAssistant) {
+        //         current_config = assistants.find((item: any) => item._id == assistant_id);
+        //       }
+        //       new_updated_menu(currentAssistant);
+        //     } else {
+        //       router.push("/");
+        //     }
+        //   });
+        // } else if (assistants.length > 0 && !currentAssistant) {
+        //   current_config = assistants.find((item: any) => item._id == assistant_id);
+        //   new_updated_menu(current_config);
+        // }
       }
     }, 500);
 
@@ -100,7 +107,7 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
   return (
     <main className="mx-auto px-1 md:px-6 lg:px-8 h-screen -mb-[4rem]">
       <div className="w-full overflow-hidden">
-        <App setMessages={handlNewMessage} setLoadingRes={setLoadingRes} messages={messages} handleCallState={handleCallState} />
+        <App setMessages={handlNewMessage} setLoadingRes={setLoadingRes} messages={messages} handleCallState={handleCallState} currentAssistant={selectedAssistant} />
         {messages.length > 1 && <ChatList messages={messages} loadingRes={loadingRes} />}
       </div>
       {callActive && (
