@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -31,12 +30,7 @@ export function AddCreditModal() {
     console.log("Credits added:", amount);
   };
 
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(""), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [error]))
+  
 
   return (
     <Dialog>
