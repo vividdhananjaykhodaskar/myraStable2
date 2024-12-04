@@ -1,7 +1,9 @@
+import { validateRequest } from "@/lib/auth";
+import connectMongo from "@/mongodb/connectmongoDb";
 import { PaymentOrderModel } from "@/mongodb/models/mainModel";
 import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
-
+import { ObjectId } from 'mongodb';
 // Initialize Razorpay instance
 const razorpay = new Razorpay({
   key_id: 'rzp_test_xkNx1lpB3upUcJ',
@@ -10,8 +12,15 @@ const razorpay = new Razorpay({
 
 export async function POST(request: NextRequest) {
   try {
+    const { user } = await validateRequest();
+
+    if (!user || !user.id) {
+      return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
+    }
+
     const { amount, currency, receipt, notes } = await request.json();
 
+    await connectMongo();
     // Razorpay order creation options
     const options = {
       amount, // Amount is expected in smallest currency unit (e.g., paise for INR)
@@ -30,8 +39,10 @@ export async function POST(request: NextRequest) {
       currency: razorpayOrder.currency,
       receipt: razorpayOrder.receipt,
       status: razorpayOrder.status || "created",
+      userId:user.id.toString() ,
     });
 
+    console.log(user.id)
     await newOrder.save();
 
     // Return order details to frontend

@@ -1,4 +1,6 @@
-import { PaymentOrderModel } from "@/mongodb/models/mainModel";
+import { validateRequest } from "@/lib/auth";
+import connectMongo from "@/mongodb/connectmongoDb";
+import { PaymentOrderModel, User } from "@/mongodb/models/mainModel";
 import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
@@ -11,6 +13,13 @@ const razorpay = new Razorpay({
 
 export async function POST(request: NextRequest) {
   try {
+    const { user } = await validateRequest();
+
+    if (!user) {
+      return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
+    }
+    await connectMongo();
+  
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       await request.json();
     const secret = process.env.NEXT_RAZORPAY_SECRET || "";
@@ -31,8 +40,12 @@ export async function POST(request: NextRequest) {
       if (order) {
         // Update the order status to 'paid'
         order.status = "processed";
+        const creditToAdd = order.amount / 100;
+        const currUser = await User.findById(user.id);
+        currUser.credits += creditToAdd;
+        await currUser.save(); 
         await order.save(); // Save the updated order to the database
-
+        
         // Return success response
         return NextResponse.json(
           { status: "ok", message: "Payment verified and order updated" },

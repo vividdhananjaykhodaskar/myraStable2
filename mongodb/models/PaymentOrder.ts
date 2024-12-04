@@ -8,6 +8,7 @@ export interface IPaymentOrder extends Document {
   status: "created" | "processed" | "failed";
   createdAt: Date;
   updatedAt: Date;
+  userId: Schema.Types.ObjectId;
 }
 
 export const PaymentOrderSchema = new Schema<IPaymentOrder>(
@@ -21,6 +22,11 @@ export const PaymentOrderSchema = new Schema<IPaymentOrder>(
       enum: ["created", "processed", "failed"],
       default: "created",
     },
+    userId:{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    }
   },
   {
     timestamps: true,
