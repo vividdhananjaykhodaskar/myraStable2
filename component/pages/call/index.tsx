@@ -5,18 +5,21 @@ import ChatList from "@/component/pages/ChatList";
 import { useAppDispatch, useAppSelector } from "@/redux";
 import { getAllUserAssistant, getAssistantDetailsById, getShareAssistant, updateMenu } from "@/service/assistantservice";
 import { useParams, useRouter } from "next/navigation";
-import { handleAssistants, handleCurrentAssistant } from "@/redux/indSourceSlice";
+// import { handleAssistants, handleCurrentAssistant } from "@/redux/indSourceSlice";
 
 const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => {
   const router = useRouter();
   const { assistant_id } = useParams();
   const dispatch = useAppDispatch();
   const [messages, setMessages] = useState<any>([]);
-  const { assistants, currentAssistant } = useAppSelector((state) => state.insdata);
+  // const { assistants, currentAssistant } = useAppSelector((state) => state.insdata);
   const [loadingRes, setLoadingRes] = useState(false);
   const [callActive, setCallActive] = useState<any>(false);
   const [callstatus, setCallStatus] = useState<any>("Listening");
   const [selectedAssistant,setSelectedAssistant] = useState(null);
+  const [insufficientCredit, setInsufficientCredit] = useState(false);
+
+
   useEffect(() => {
     requestWakeLock();
 
@@ -29,15 +32,26 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
         const share_assistant: any = await getShareAssistant(assistant_id, share_key);
         if (share_assistant.success) {
           new_updated_menu(share_assistant.data);
+        } else if (share_assistant.status === 402) {
+          setInsufficientCredit(true); // Show insufficient credit message
         } else {
           router.push("/");
         }
+
       } else {
-        const currSelectedAssitantDetails:any =await getAssistantDetailsById(assistant_id);
-        if(currSelectedAssitantDetails.success && currSelectedAssitantDetails?.data){
+        const currSelectedAssitantDetails: any = await getAssistantDetailsById(assistant_id);
+        if (currSelectedAssitantDetails.success) {
           setSelectedAssistant(currSelectedAssitantDetails.data);
           new_updated_menu(currSelectedAssitantDetails.data);
+        } else if (currSelectedAssitantDetails.status === 402) {
+          setInsufficientCredit(true); // Show insufficient credit message
+        } else {
+          router.push("/");
         }
+ 
+        // else {
+        //   router.push("/");
+        // }
 
         // let current_config: any = currentAssistant || null;
         // if (assistants.length === 0) {
@@ -76,7 +90,7 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
         system_prompt = system_prompt + "\n" +  (integration_id?.integration_details?.restaurant_menu_prompt ?? "")
       }
     }
-    dispatch(handleCurrentAssistant(assistant));
+    setSelectedAssistant(assistant)
     setMessages([{ content: system_prompt, role: "system" }]);
   };
 
@@ -105,11 +119,27 @@ const MyCall = ({ share, share_key }: { share: boolean; share_key: string }) => 
   };
 
   return (
-    <main className="mx-auto px-1 md:px-6 lg:px-8 h-screen -mb-[4rem]">
-      <div className="w-full overflow-hidden">
-        <App setMessages={handlNewMessage} setLoadingRes={setLoadingRes} messages={messages} handleCallState={handleCallState} currentAssistant={selectedAssistant} />
-        {messages.length > 1 && <ChatList messages={messages} loadingRes={loadingRes} />}
+<main className="mx-auto px-1 md:px-6 lg:px-8 h-screen -mb-[4rem] flex flex-col justify-center items-center">
+  <div className="w-full overflow-hidden">
+    {insufficientCredit ? (
+      <div className="insufficient-credit-message flex justify-center items-center text-red-600 h-full">
+        <p>Insufficient credit to continue using this service.</p>
       </div>
+    ) : (
+      <>
+        {selectedAssistant && (
+          <App
+            setMessages={handlNewMessage}
+            setLoadingRes={setLoadingRes}
+            messages={messages}
+            handleCallState={handleCallState}
+            currentAssistant={selectedAssistant}
+          />
+        )}
+        {messages.length > 1 && <ChatList messages={messages} loadingRes={loadingRes} />}
+      </>
+    )}
+  </div>
       {callActive && (
         <div className="box-loader">
           <div className="wrapper">

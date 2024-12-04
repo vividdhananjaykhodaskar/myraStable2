@@ -56,7 +56,7 @@ export const updateAssistant = (data: any, id: string) => {
 
 export const getShareAssistant = (assistant_id: any, share_key: string) => {
   return fetch(`/api/assistant/${assistant_id}/share`, {
-    method: "post",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -67,17 +67,19 @@ export const getShareAssistant = (assistant_id: any, share_key: string) => {
     .then(async (res) => {
       const result = await res.json();
       if (res.ok) {
-        return { success: true, message: result.message, data: result.data };
+        return { success: true, message: result.message, data: result.data, status: res.status };
       }
-
-      return { success: false, message: result.message };
+      
+      // If response is not OK (e.g., status 402), return the status code too
+      return { success: false, message: result.message, status: res.status };
     })
-    .catch(() => ({ success: false, message: "somthing went worng" }));
+    .catch(() => ({ success: false, message: "Something went wrong", status: 500 }));
 };
+
 
 export const getAssistantDetailsById = (assistant_id: any) => {
   return fetch(`/api/assistant/${assistant_id}/userCall`, {
-    method: "get",
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
@@ -85,13 +87,15 @@ export const getAssistantDetailsById = (assistant_id: any) => {
     .then(async (res) => {
       const result = await res.json();
       if (res.ok) {
-        return { success: true, message: result.message, data: result.data };
+        return { success: true, message: result.message, data: result.data, status: res.status };
       }
 
-      return { success: false, message: result.message };
+      // If response is not OK (e.g., status 402), return the status code too
+      return { success: false, message: result.message, status: res.status };
     })
-    .catch(() => ({ success: false, message: "somthing went worng" }));
+    .catch(() => ({ success: false, message: "Something went wrong", status: 500 }));
 };
+
 
 export const deleteAssistant = (id: string) => {
   return fetch("/api/assistant/" + id, {
