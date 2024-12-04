@@ -26,7 +26,7 @@ const App = () => {
       // Ensure amount is in paise (1 INR = 100 paise)
       const amountInPaise = amount * 100;
 
-      const response:any = await createPaymentOrder(
+      const response: any = await createPaymentOrder(
         amountInPaise,
         "INR",
         "receipt#1"
@@ -51,7 +51,7 @@ const App = () => {
           theme: {
             color: "#1C3537",
           },
-          handler: function (response:any) {
+          handler: function (response: any) {
             console.log("Payment response received:", response);
             axios
               .post("http://localhost:3000/api/addCredit/verifyPayment", {
@@ -88,7 +88,11 @@ const App = () => {
 
   return (
     <div>
-      <AddCreditModal amount={amount} setAmount={setAmount} handlePay={payNow}/>
+      <AddCreditModal
+        amount={amount}
+        setAmount={setAmount}
+        handlePay={payNow}
+      />
     </div>
   );
 };

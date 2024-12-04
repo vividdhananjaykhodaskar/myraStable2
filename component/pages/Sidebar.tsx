@@ -108,11 +108,7 @@ const Sidebar = () => {
             </Link>
           </li>
         </ul>
-        <RazorpayPayment/>
         <div className="flex gap-3 items-center justify-between py-5 border-t border-[#3d3d3d] bg-[#00181a] absolute w-[calc(100%-32px)] bottom-0">
-          <h3 className="text-white text-base">{user?.name}</h3>
-          <Coins />
-          <h3 className="text-white text-base">{user?.credits.toFixed(0)}</h3>
           <a href="#" onClick={handleLogout}>
             <Image
               src="/logout.svg"

@@ -35,7 +35,7 @@ export function AddCreditModal({ amount, setAmount, handlePay }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Credits</Button>
+        <Button variant="bg-emerald" className="bg-emerald-300 text-black p-2 px-4 rounded-3xl font-medium text-sm md:text-base w-full max-w-full sm:max-w-fit">Add Credits</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
