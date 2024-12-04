@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { createPaymentOrder } from "@/service/payment";
+import { AddCreditModal } from "../../Modal/AddCreditModal";
 
 const App = () => {
   const [amount, setAmount] = useState(0);
@@ -102,6 +103,7 @@ const App = () => {
           Pay Now
         </button>
       </form>
+      <AddCreditModal />
     </div>
   );
 };
