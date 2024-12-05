@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { createPaymentOrder } from "@/service/payment";
+import { createPaymentOrder, verifyPayment } from "@/service/payment";
 import { AddCreditModal } from "../../Modal/AddCreditModal";
 
 const App = () => {
@@ -53,16 +53,15 @@ const App = () => {
           },
           handler: function (response: any) {
             console.log("Payment response received:", response);
-            axios
-              .post("http://localhost:3000/api/addCredit/verifyPayment", {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              })
-              .then((res) => {
+            verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            })
+              .then((res:any) => {
                 console.log("Payment verification response:", res.data);
-                if (res.data.status === "ok") {
-                  window.location.href = "/payment-success";
+                if (res.success && res.data.status === "ok") {
+                  window.location.href = "/dashboard";
                 } else {
                   alert("Payment verification failed");
                 }
