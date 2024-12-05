@@ -27,7 +27,7 @@ class MyPushAudioOutputStream extends PushAudioOutputStreamCallback {
 }
 
 export async function POST(request: Request) {
-  const { text }: any = await request.json();
+  const { text, voice }: any = await request.json();
   const callId = new URL(request.url).searchParams.get('id');
 
   if (callId && text?.length) {
@@ -38,9 +38,10 @@ export async function POST(request: Request) {
     }
   }
 
+  const model_voice: any= voice || "hi-IN-SwaraNeural";
 
   const speechConfig = SpeechConfig.fromSubscription(subscriptionKey, serviceRegion);
-  speechConfig.speechSynthesisVoiceName = "hi-IN-SwaraNeural";
+  speechConfig.speechSynthesisVoiceName = model_voice;
   speechConfig.speechSynthesisOutputFormat = SpeechSynthesisOutputFormat.Audio24Khz48KBitRateMonoMp3;
 
   const audioStream = new ReadableStream({
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
       const audioConfig: AudioConfig = AudioConfig.fromStreamOutput(stream);
 
       const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
-      const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='Female' name='hi-IN-SwaraNeural'><prosody rate='${40}%'>${text}</prosody></voice></speak>`;
+      const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='Female' name='${model_voice}'><prosody rate='${40}%'>${text}</prosody></voice></speak>`;
 
       synthesizer.speakSsmlAsync(
         ssml,
