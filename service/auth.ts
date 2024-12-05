@@ -89,3 +89,41 @@ export const resendVerification = (email: string) => {
     })
     .catch(() => ({ success: false, message: "Something went wrong" }));
 };
+
+export const sendResetPasswordToken = (email: string) => {
+  return fetch("/api/resetPassword/sendToken?email=" + email, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(async (res) => {
+      const result = await res.json();
+      if (res.ok) {
+        return { success: true, message: result.message, statusCode: res.status };
+      }
+
+      return { success: false, message: result.message, statusCode: res.status };
+    })
+    .catch(() => ({ success: false, message: "Something went wrong", statusCode: 500 }));
+};
+
+
+export const verifyResetPasswordToken = (token: string, newPassword: string) => {
+  return fetch("/api/resetPassword/verifyToken", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token, newPassword }),
+  })
+    .then(async (res) => {
+      const result = await res.json();
+      if (res.ok) {
+        return { success: true, message: result.message, statusCode: res.status };
+      }
+
+      return { success: false, message: result.message, statusCode: res.status };
+    })
+    .catch(() => ({ success: false, message: "Something went wrong", statusCode: 500 }));
+};

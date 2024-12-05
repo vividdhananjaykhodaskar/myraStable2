@@ -11,11 +11,13 @@ export interface IUser extends Document {
   verificationToken: string | null;
   verificationTokenExpires: Date | null;
   credits: number;
+  passwordResetToken: string | null;
+  passwordResetTokenExpires: Date | null;
 }
 export const userSchema = new Schema<IUser>(
   {
-    email: { type: String, required: true },
-    name: { type: String },
+    email: { type: String, required: true, unique: true },
+    name: { type: String, required: true }, 
     contact: { type: String },
     salt: { type: String },
     password: { type: String, required: true },
@@ -24,6 +26,8 @@ export const userSchema = new Schema<IUser>(
     verificationToken: { type: String, default: null },
     verificationTokenExpires: { type: Date, default: null },
     credits: { type: Number, default: 200 },
+    passwordResetToken: { type: String, default: null },
+    passwordResetTokenExpires: { type: Date, default: null },
   },
   {
     toJSON: {
@@ -36,6 +40,8 @@ export const userSchema = new Schema<IUser>(
         delete ret.verificationToken;
         delete ret.isVerified;
         delete ret.verificationTokenExpires;
+        delete ret.passwordResetToken;
+        delete ret.passwordResetTokenExpires;
       },
     },
     timestamps: true,

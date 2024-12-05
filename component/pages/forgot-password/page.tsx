@@ -6,64 +6,30 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { loginFunction, resendVerification } from "@/service/auth";
 import { useRouter } from "next/navigation";
-import { useAppDispatch } from "@/redux";
-import { handleUser } from "@/redux/indSourceSlice";
+import { sendResetPasswordToken } from "@/service/auth";
 
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup.string().required("Password is required"),
 });
 
-function LoginInner() {
+function ForgotPasswordInner() {
   const route = useRouter();
-  const dispatch = useAppDispatch();
-  const [resendEmail, setResendEmail] = useState(""); // State to track resend button visibility
   const [statusMessage, setStatusMessage] = useState(""); // State for status messages
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data: any) => {
-    const loginUser: any = await loginFunction(data);
-    if (loginUser.success) {
-      dispatch(handleUser(loginUser.data));
-      route.push("/dashboard");
-    } else {
-      setResendEmail(loginUser?.statusCode === 403 ? data.email : "");
-      setError("password", {
-        type: "manual",
-        message: loginUser.message,
-      });
-    }
-  };
-
-  const handleResendVerification = async () => {
-    try {
-      const response = await resendVerification(resendEmail);
-      if (response.success) {
-        setStatusMessage(
-          "Verification email sent successfully. Please check your email."
-        );
-        reset();
-      } else {
-        setStatusMessage(
-          response.message || "Failed to resend verification email."
-        );
-      }
-    } catch (error) {
-      setStatusMessage(
-        "An error occurred while sending the verification email."
-      );
-    }
-    setResendEmail(""); // Hide resend button after the action
+  const onSubmit = (data: any) => {
+    // Log the email value after validation
+    console.log("Email submitted:", data.email);
+    sendResetPasswordToken(data.email)
+    setStatusMessage("Email submitted successfully.");
   };
 
   return (
@@ -78,7 +44,7 @@ function LoginInner() {
           onClick={() => route.push("/")}
         />
         <h2 className="text-center lg:text-2xl md:text-xl text-lg font-medium text-white lg:mb-6 mb-4">
-          Welcome back
+          Forgot Password
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col lg:gap-4 gap-3">
@@ -91,31 +57,7 @@ function LoginInner() {
               register={register}
               required
             />
-            <FormInput
-              name="password"
-              type={"password"}
-              label={"Password"}
-              placeholder={"Enter your password"}
-              error={errors.password?.message}
-              register={register}
-              required
-            />
-            {resendEmail && (
-              <button
-                type="button"
-                className="underline text-green-400"
-                onClick={handleResendVerification}
-              >
-                Resend Verification Email
-              </button>
-            )}
-             <Link
-                href={"/forgot-password"}
-                className="underline font-medium"
-              >
-                Forgot Password
-              </Link>
-            {statusMessage && !resendEmail && (
+            {statusMessage && (
               <p
                 className={`text-center text-sm ${statusMessage.includes("successfully") ? "text-green-500" : "text-red-500"}`}
               >
@@ -126,12 +68,12 @@ function LoginInner() {
               Submit
             </button>
             <p className="text-white text-center md:text-base text-sm mb-0">
-              If you don't have account{" "}
+              Remembered your password?{" "}
               <Link
-                href={"/signup"}
+                href={"/login"}
                 className="text-[#E7C66C] underline font-medium"
               >
-                Register
+                Login
               </Link>
             </p>
           </div>
@@ -141,4 +83,4 @@ function LoginInner() {
   );
 }
 
-export default LoginInner;
+export default ForgotPasswordInner;
