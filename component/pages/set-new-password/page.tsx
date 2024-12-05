@@ -38,17 +38,17 @@ function ForgotPasswordToken() {
 
   const onSubmit = async (data: any) => {
     setLoading(true);
-    setStatusMessage("");
+    setStatusMessage(""); // Clear previous status message
 
     const result = await verifyResetPasswordToken(token, data.newPassword);
 
     if (result.success) {
-      setStatusMessage(result.message); 
+      setStatusMessage(result.message);
     } else {
       setStatusMessage(result.message);
     }
 
-    setLoading(false); 
+    setLoading(false); // Reset loading state after API call
   };
 
   return (
@@ -92,8 +92,11 @@ function ForgotPasswordToken() {
                 {statusMessage}
               </p>
             )}
-            <button className="mt-4 w-full block bg-green-400 text-black p-2 md:text-base text-sm rounded-md uppercase font-semibold hover:bg-transparent hover:text-green-400 border border-solid border-green-400 transition-all duration-300 ease-in">
-              Change Password
+            <button
+              className="mt-4 w-full block bg-green-400 text-black p-2 md:text-base text-sm rounded-md uppercase font-semibold hover:bg-transparent hover:text-green-400 border border-solid border-green-400 transition-all duration-300 ease-in"
+              disabled={loading} // Disable button during loading
+            >
+              {loading ? "Changing Password..." : "Change Password"} {/* Change button text */}
             </button>
             <p className="text-white text-center md:text-base text-sm mb-0">
               Remembered your password?{" "}

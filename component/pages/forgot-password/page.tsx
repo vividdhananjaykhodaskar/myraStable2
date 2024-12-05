@@ -16,6 +16,7 @@ const schema = yup.object().shape({
 function ForgotPasswordInner() {
   const route = useRouter();
   const [statusMessage, setStatusMessage] = useState(""); // State for status messages
+  const [isSubmitting, setIsSubmitting] = useState(false); // State to track if API call is in progress
   const {
     register,
     handleSubmit,
@@ -26,12 +27,12 @@ function ForgotPasswordInner() {
   });
 
   const onSubmit = async (data: any) => {
-    // Log the email value after validation
     console.log("Email submitted:", data.email);
     
+    setIsSubmitting(true);
     const response = await sendResetPasswordToken(data.email);
+    setIsSubmitting(false); 
   
-    // Set the status message accordingly based on the response
     setStatusMessage(response.message);
   };
 
@@ -69,8 +70,11 @@ function ForgotPasswordInner() {
                 {statusMessage}
               </p>
             )}
-            <button className="mt-4 w-full block bg-green-400 text-black p-2 md:text-base text-sm rounded-md uppercase font-semibold hover:bg-transparent hover:text-green-400 border border-solid border-green-400 transition-all duration-300 ease-in">
-              Submit
+            <button
+              className="mt-4 w-full block bg-green-400 text-black p-2 md:text-base text-sm rounded-md uppercase font-semibold hover:bg-transparent hover:text-green-400 border border-solid border-green-400 transition-all duration-300 ease-in"
+              disabled={isSubmitting} 
+            >
+              {isSubmitting ? "Sending Link..." : "Submit"} 
             </button>
             <p className="text-white text-center md:text-base text-sm mb-0">
               Remembered your password?{" "}
