@@ -30,7 +30,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     },
   });
 
-  const resetLink = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/reset-password?token=${token}`;
+  const resetLink = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/set-new-password/${token}`;
 
   const mailOptions = {
     from: process.env.EMAIL_USER,

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 // forgot-password-token/page.tsx
 import React, { useState } from "react";
 import FormInput from "../../FormField/FormInput"; // Assuming you already have a reusable input form component
@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useParams, useRouter } from "next/navigation";
+import { verifyResetPasswordToken } from "@/service/auth";
 
 const schema = yup.object().shape({
   newPassword: yup
@@ -21,9 +22,10 @@ const schema = yup.object().shape({
 });
 
 function ForgotPasswordToken() {
-  const { token } = useParams(); // Get token from URL
+  const { token }: { token: string } = useParams(); // Get token from URL
   const router = useRouter();
   const [statusMessage, setStatusMessage] = useState(""); // State for status messages
+  const [loading, setLoading] = useState(false); // State to handle loading state
 
   const {
     register,
@@ -34,11 +36,19 @@ function ForgotPasswordToken() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    // Log the new password and token
-    console.log("Token:", token);
-    console.log("New Password:", data.newPassword);
-    setStatusMessage("Password changed successfully.");
+  const onSubmit = async (data: any) => {
+    setLoading(true);
+    setStatusMessage("");
+
+    const result = await verifyResetPasswordToken(token, data.newPassword);
+
+    if (result.success) {
+      setStatusMessage(result.message); 
+    } else {
+      setStatusMessage(result.message);
+    }
+
+    setLoading(false); 
   };
 
   return (

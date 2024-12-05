@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     }
 
     const passwordResetToken = crypto.randomBytes(32).toString("hex");
-    const passwordResetTokenExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry time
+    const passwordResetTokenExpires = new Date(Date.now() + 15 * 60 * 1000);
 
     user.passwordResetToken = passwordResetToken;
     user.passwordResetTokenExpires = passwordResetTokenExpires;
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     sendPasswordResetEmail(user.email, passwordResetToken);
 
     return NextResponse.json(
-      { message: "A password reset link has been sent to your email." },
+      { message: "A password reset link has been sent successfully to your email." },
       { status: 200 }
     );
   } catch (e: any) {

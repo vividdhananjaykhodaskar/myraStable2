@@ -25,11 +25,18 @@ function ForgotPasswordInner() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     // Log the email value after validation
     console.log("Email submitted:", data.email);
-    sendResetPasswordToken(data.email)
-    setStatusMessage("Email submitted successfully.");
+    
+    const response = await sendResetPasswordToken(data.email);
+  
+    // Set the status message accordingly based on the response
+    setStatusMessage(response.message);
+  };
+
+  const getStatusClass = (message: string) => {
+    return message.includes("successfully") ? "text-green-500" : "text-red-500";
   };
 
   return (
@@ -58,9 +65,7 @@ function ForgotPasswordInner() {
               required
             />
             {statusMessage && (
-              <p
-                className={`text-center text-sm ${statusMessage.includes("successfully") ? "text-green-500" : "text-red-500"}`}
-              >
+              <p className={`text-center text-sm ${getStatusClass(statusMessage)}`}>
                 {statusMessage}
               </p>
             )}
