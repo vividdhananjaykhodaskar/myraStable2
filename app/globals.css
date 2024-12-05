@@ -586,3 +586,30 @@ textarea.form-control {
   inset: 0;
   margin: auto;
 }
+/* .razorpay-container {
+  max-height: 75dvh !important;
+  max-width: 92%;
+  inset: 0;
+  margin: auto;
+  border-radius: 12px;
+  overflow: hidden !important;
+}
+@media(min-width: 1025px){
+  .razorpay-container {
+    max-height: 75dvh !important;
+    max-width: 530px;
+  }
+}
+@media(min-width: 1025px){
+  .razorpay-container {
+    max-width: 1100px;
+    border-radius: 16px;
+  }
+}
+@media(min-width: 1441px){
+  .razorpay-container {
+    max-width: 1032px;
+    max-height: 72dvh !important;
+    border-radius: 20px;
+  }
+} */
