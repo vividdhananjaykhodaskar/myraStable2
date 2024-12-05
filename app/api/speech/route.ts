@@ -38,10 +38,11 @@ export async function POST(request: Request) {
     }
   }
 
-  const model_voice: any= voice || "hi-IN-SwaraNeural";
+  const model_voice_name: any= voice.name || "hi-IN-SwaraNeural";
+  const model_voice_gender: any= voice.gender || "Female";
 
   const speechConfig = SpeechConfig.fromSubscription(subscriptionKey, serviceRegion);
-  speechConfig.speechSynthesisVoiceName = model_voice;
+  speechConfig.speechSynthesisVoiceName = model_voice_name;
   speechConfig.speechSynthesisOutputFormat = SpeechSynthesisOutputFormat.Audio24Khz48KBitRateMonoMp3;
 
   const audioStream = new ReadableStream({
@@ -50,7 +51,7 @@ export async function POST(request: Request) {
       const audioConfig: AudioConfig = AudioConfig.fromStreamOutput(stream);
 
       const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
-      const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='Female' name='${model_voice}'><prosody rate='${40}%'>${text}</prosody></voice></speak>`;
+      const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='${model_voice_gender}' name='${model_voice_name}'><prosody rate='${40}%'>${text}</prosody></voice></speak>`;
 
       synthesizer.speakSsmlAsync(
         ssml,

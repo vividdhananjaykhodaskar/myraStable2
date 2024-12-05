@@ -18,7 +18,7 @@ export const generateSpeech = async (text: any, call_id?: string, signal?: any) 
   }
 };
 
-export const generateSpeechNew = async (text: any, call_id?: string, signal?: any, voice: any = "" ) => {
+export const generateSpeechNew = async (text: any, call_id?: string, signal?: any, voice: any = {} ) => {
   try {
     const response = await fetch(`/api/speech?${call_id ? `id=${call_id}` : ""}`, {
       method: "post",

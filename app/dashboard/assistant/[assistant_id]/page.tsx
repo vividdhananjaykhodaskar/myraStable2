@@ -81,9 +81,15 @@ const AssitantConfiguration = () => {
 
   const handleDataChange = (e: any) => {
     const { name, value } = e.target;
-    setComplationConfig({ ...complationConfig, [name]: value });
+  
+    if (name === "groq_model_voice") {
+      const selectedVoice = voiceOptions.find(voice => voice.name === value);
+      setComplationConfig({ ...complationConfig, [name]: selectedVoice });
+    } else {
+      setComplationConfig({ ...complationConfig, [name]: value });
+    }
   };
-
+  
   const handleCall = () => {
     router.push(`/call/${currentAssistant._id}`);
   };
@@ -346,7 +352,7 @@ const AssitantConfiguration = () => {
                   id="groq_model_voice"
                   onChange={handleDataChange}
                   name="groq_model_voice"
-                  value={complationConfig?.groq_model_voice}
+                  value={complationConfig?.groq_model_voice?.name}
                   className="w-full border border-[#3d3d3d] resize-none rounded-md  p-3 focus:outline-0"
                 >
                   <option value="" disabled>Select a voice</option>
