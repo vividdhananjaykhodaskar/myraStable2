@@ -12,6 +12,10 @@ export interface ICompilation {
   integration_type: string;
   integration_id: any;
   welcome_message: string;
+  groq_model_voice: {
+    name: string;
+    gender: string;
+  };
 }
 export const ConfigurationSchema = new Schema<ICompilation>(
   {
@@ -25,6 +29,10 @@ export const ConfigurationSchema = new Schema<ICompilation>(
     integration_type: String,
     integration_id: { type: Schema.Types.ObjectId, ref: "integration" },
     welcome_message: String,
+    groq_model_voice: {
+      name: { type: String, default: "hi-IN-SwaraNeural" },
+      gender: { type: String, default: "Female" }
+    },
   },
   {
     toJSON: {

@@ -24,6 +24,39 @@ app.prepare().then(() => {
     },
   });
 
+  const deductCredits = async (userId:string, creditsToDeduct:number, session:any) => {
+    const result : any = await User.updateOne(
+      { _id: userId },
+      { $inc: { credits: -creditsToDeduct } },
+      { session }
+    );
+    if (result.nModified === 0) {
+      throw new Error("Failed to deduct credits. User not found or no update made.");
+    }
+  };
+  
+
+  const executeTransaction = async (callCollection:any, creditsToDeduct:number) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+  
+    try {
+      // Deduct credits using atomic operation
+      await deductCredits(callCollection.user_id, creditsToDeduct, session);
+  
+      await session.commitTransaction();
+      return true; // Transaction succeeded
+    } catch (error) {
+      await session.abortTransaction();
+      console.error("Transaction failed", error);
+      return false; // Transaction failed
+    } finally {
+      session.endSession();
+    }
+  };
+  const delay = (ms:number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+
   io.on("connection", (socket) => {
     let callId: string = "";
     socket.emit("message", "Hello, client!");
@@ -49,40 +82,47 @@ app.prepare().then(() => {
           },
           true
         );
-
+    
+        if (!callCollection) {
+          console.error("Call collection not found for callId:", callId);
+          return;
+        }
+    
         const callStartTime = callCollection.createdAt;
         const callEndTime = callCollection.call_end_time;
-        
+    
         const creditsToDeduct = calculateCredits(callStartTime, callEndTime);
-
+    
+        if (creditsToDeduct <= 0) {
+          console.log("No credits to deduct for this call.");
+          return;
+        }
+    
         let retryCount = 0;
         let success = false;
-
+    
         while (retryCount < MAX_RETRIES && !success) {
-          const session = await mongoose.startSession();
-          session.startTransaction();
           try {
-            const user = await User.findById(callCollection.user_id).session(session);
-            if (user) {
-              user.credits -= creditsToDeduct;
-              await user.save({ session });
-            }
-            await session.commitTransaction();
-            success = true;
+            success = await executeTransaction(callCollection, creditsToDeduct);
           } catch (error) {
-            await session.abortTransaction();
+            console.error(
+              `Retry ${retryCount + 1} failed for callId: ${callId}, userId: ${callCollection.user_id}:`,
+              error
+            );
+          }
+    
+          if (!success) {
             retryCount++;
-            console.error(`Transaction failed, retrying (${retryCount}/${MAX_RETRIES})`, error);
-          } finally {
-            session.endSession();
+            await delay(1000);
           }
         }
-
+    
         if (!success) {
-          console.error("Transaction failed after retries.");
+          console.error(`Transaction failed for callId: ${callId} after ${MAX_RETRIES} retries.`);
         }
       }
     });
+    
   });
 
   httpServer

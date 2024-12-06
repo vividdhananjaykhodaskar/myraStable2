@@ -81,9 +81,15 @@ const AssitantConfiguration = () => {
 
   const handleDataChange = (e: any) => {
     const { name, value } = e.target;
-    setComplationConfig({ ...complationConfig, [name]: value });
+  
+    if (name === "groq_model_voice") {
+      const selectedVoice = voiceOptions.find(voice => voice.name === value);
+      setComplationConfig({ ...complationConfig, [name]: selectedVoice });
+    } else {
+      setComplationConfig({ ...complationConfig, [name]: value });
+    }
   };
-
+  
   const handleCall = () => {
     router.push(`/call/${currentAssistant._id}`);
   };
@@ -115,6 +121,25 @@ const AssitantConfiguration = () => {
       loadAssitant();
     }
   };
+
+  // 
+
+  const voiceOptions = [
+    { name: "hi-IN-SwaraNeural", gender: "Female" },
+    { name: "en-IN-AashiNeural", gender: "Female" },
+    { name: "en-IN-AnanyaNeural", gender: "Female" },
+    { name: "en-IN-KavyaNeural", gender: "Female" },
+    { name: "en-IN-AaravNeural", gender: "Male" },
+    { name: "en-IN-KunalNeural", gender: "Male" },
+    { name: "en-IN-RehaanNeural", gender: "Male" },
+    { name: "hi-IN-AnanyaNeural", gender: "Female" },
+    { name: "hi-IN-KavyaNeural", gender: "Female" },
+    { name: "hi-IN-AaravNeural", gender: "Male" },
+    { name: "hi-IN-KunalNeural", gender: "Male" },
+    { name: "hi-IN-RehaanNeural", gender: "Male" },
+  ];
+
+  // 
 
   return currentAssistant ? (
     <div className="border border-[#3d3d3d] flex-grow xl:w-4/6 w-full  xl:h-[calc(100vh-40px)] h-auto xl:mt-0 mt-5 p-5 overflow-y-auto custom-scrollbar rounded-md xl:min-h-[580px] min-h-max">
@@ -318,6 +343,27 @@ const AssitantConfiguration = () => {
                   <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
                 </select>
               </div>
+              {/*  */}
+              <div>
+              <label htmlFor="model" className="block w-full mb-2 text-sm">
+                  Model Voice
+                </label>
+                <select
+                  id="groq_model_voice"
+                  onChange={handleDataChange}
+                  name="groq_model_voice"
+                  value={complationConfig?.groq_model_voice?.name}
+                  className="w-full border border-[#3d3d3d] resize-none rounded-md  p-3 focus:outline-0"
+                >
+                  <option value="" disabled>Select a voice</option>
+                    {voiceOptions.map((voice) => (
+                      <option key={voice.name} value={voice.name}>
+                        {voice.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              {/*  */}
               <div className="mb-3">
                 <label htmlFor="knowledgebase" className="block w-full mb-2 text-sm">
                   Max Token

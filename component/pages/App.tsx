@@ -337,7 +337,7 @@ const App = ({
 
     const new_signal = handleSignal();
     if (currentAssistant?.welcome_message) {
-      const reader: any = await generateSpeechNew(currentAssistant?.welcome_message, currentCall, new_signal);
+      const reader: any = await generateSpeechNew(currentAssistant?.welcome_message, currentCall, new_signal, currentAssistant?.groq_model_voice);
       processchunckdevice(reader);
     }
 
@@ -439,7 +439,7 @@ const App = ({
     if (!isResponse) {
       new_signal = handleSignal();
       setMessages(openAIResponse, "assistant");
-      reader = await generateSpeechNew(openAIResponse, currentCall, new_signal);
+      reader = await generateSpeechNew(openAIResponse, currentCall, new_signal, currentAssistant.groq_model_voice);
     }
 
     if (reader) {
