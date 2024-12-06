@@ -11,6 +11,7 @@ import { NextResponse } from "next/server";
 
 const subscriptionKey = process.env.AZURE_SPEECH_KEY as string;
 const serviceRegion = process.env.AZURE_SPEECH_REGION as string;
+const sanitizeText= (input: string): string => input.replace(/[^a-zA-Z0-9\s.,!?]/g, '');
 
 class MyPushAudioOutputStream extends PushAudioOutputStreamCallback {
   out_controller: any;
@@ -51,7 +52,9 @@ export async function POST(request: Request) {
       const audioConfig: AudioConfig = AudioConfig.fromStreamOutput(stream);
 
       const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
-      const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='${model_voice_gender}' name='${model_voice_name}'><prosody rate='${40}%'>${text}</prosody></voice></speak>`;
+      const escapedText = sanitizeText(text);
+      const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='${model_voice_gender}' name='${model_voice_name}'><prosody rate='${40}%'>${escapedText}</prosody></voice></speak>`;
+
 
       synthesizer.speakSsmlAsync(
         ssml,
